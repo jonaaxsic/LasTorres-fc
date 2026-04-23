@@ -1,8 +1,12 @@
-# Las Torres FC
+<h1 align="center">Las Torres FC</h1>
 
-<img src="assets/logo.png" alt="Logo Las Torres FC" width="150" />
+<p align="center">
+  <img src="assets/logo.png" alt="Logo Las Torres FC" width="150" />
+</p>
 
-Página web oficial del Club de Fútbol Las Torres FC.
+<p align="center">
+  Página web oficial del Club de Fútbol Las Torres FC.
+</p>
 
 ## Tecnologías
 
