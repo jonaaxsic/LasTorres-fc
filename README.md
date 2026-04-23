@@ -94,10 +94,11 @@ MIT
 ## Redes Sociales
 
 <p align="center">
-  <a href="https://www.instagram.com/lastorres.f/" style="margin: 0 10px;">
+  <a href="https://www.instagram.com/lastorres.f/">
     <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" width="40" />
   </a>
-  <a href="https://web.facebook.com/profile.php?id=61575806463393" style="margin: 0 10px;">
+  &nbsp;&nbsp;&nbsp;
+  <a href="https://web.facebook.com/profile.php?id=61575806463393">
     <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" width="40" />
   </a>
 </p>
