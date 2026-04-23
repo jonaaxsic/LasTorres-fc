@@ -1,0 +1,16 @@
+[tool.uv]
+managed = false
+
+[tool.pyright]
+include = ["app"]
+exclude = ["**/__pycache__", "**/*.pyc"]
+
+[tool.pyright.analysis]
+autoImportCompletions = true
+completeFunctionCalls = true
+diagnosticMode = "workspace"
+typeCheckingMode = "basic"
+useLibraryCodeForTypes = true
+
+[tool.pyright.pythonVersion]
+version = "3.13"

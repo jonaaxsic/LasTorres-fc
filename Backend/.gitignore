@@ -1,0 +1,234 @@
+# =============================================================================
+# Las Torres FC - Backend Python .gitignore
+# =============================================================================
+
+# =============================================================================
+# SENSIBLE & SEGURO (NUNCA SUBIR)
+# =============================================================================
+
+# Environment files (API keys, secrets, credentials)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*
+!.env.example  # Este SÍ se sube - es la plantilla
+
+# Credenciales
+credentials.json
+*.pem
+*.key
+*.cert
+secrets/
+.secrets/
+
+# =============================================================================
+# PYTHON
+# =============================================================================
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env3/
+ ENV/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Python development
+*.profile
+*.coverage
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+.nox/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pipenv
+Pipfile.lock
+
+# =============================================================================
+# BUILD & DEPLOYMENT
+# =============================================================================
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+*.whl
+
+# Docker (ESTOS SÍ deben subirse al repo)
+# .dockerignore
+# Dockerfile
+# docker-compose.yml
+# .docker/
+
+# =============================================================================
+# IDE & EDITOR
+# =============================================================================
+
+# VS Code (except settings that should be shared)
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# JetBrains
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Emacs
+*~
+.\#*
+\#*#
+.*.swp
+.*.swo
+.*.tmp
+
+# Vim
+*.swp
+*.swo
+*.swn
+.*.un~
+
+# Sublime Text
+*.sublime-*
+*.sublime-project
+*.sublime-workspace
+
+# =============================================================================
+# SYSTEM FILES
+# =============================================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_sextype.db
+*.lnk
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# =============================================================================
+# LOGS & TEMPORARY
+# =============================================================================
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*.bak
+*.backup
+*.old
+*.orig
+*.partial
+~*
+
+# OS temp directories
+.tmp/
+.temp/
+tmp/
+Temp/
+
+# =============================================================================
+# CACHE & CLEANUP
+# =============================================================================
+
+# Cache directories
+.cache/
+.ruff_cache/
+.parcel-cache/
+.npm/
+.yarn/
+.pnpm-store/
+
+# General cache
+*.cache
+
+# =============================================================================
+# TESTING & COVERAGE
+# =============================================================================
+
+# Test coverage
+coverage/
+coverage.xml
+coverage.json
+*.lcov
+.nyc_output/
+
+# Test reports
+test-results/
+playwright-report/
+blob-report/
+*_result/
+*_results/
+
+# =============================================================================
+# AGENT & AI TOOLS (sensitive)
+# =============================================================================
+.claude/
+.agents/
+.atl/
+claude.json
+skills-lock.json
+skills/
+
+# =============================================================================
+# PACKAGE MANAGER LOCKS
+# =============================================================================
+
+# Bun
+*.lockb
+bun.lock
+
+# pnpm
+# pnpm-lock.yaml  # <-- DESCOMENTA si usas pnpm en vez de npm/yarn
+
+# =============================================================================
+# MISC
+# =============================================================================
+
+# Screenshots
+__screenshots__/
+
+# Crash reports
+crash_reports/
+*.crash
+
+# Debug files
+*.map
+debug/
