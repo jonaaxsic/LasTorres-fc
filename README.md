@@ -1,7 +1,7 @@
 <h1 align="center">Las Torres FC</h1>
 
 <p align="center">
-  <img src="assets/logo.png" alt="Logo Las Torres FC" width="150" />
+  <img src="assets/logo.png" alt="Logo Las Torres FC" width="200" />
 </p>
 
 <p align="center">
