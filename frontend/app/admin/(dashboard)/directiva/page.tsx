@@ -9,8 +9,9 @@ import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, User, Link } from "lucide-react";
 import Image from "next/image";
+import { teamApi, TeamMember } from "@/lib/api";
 
-interface Directivo {
+interface DirectivoForm {
   id?: number;
   nombre: string;
   cargo: string;
@@ -18,50 +19,11 @@ interface Directivo {
   descripcion?: string;
 }
 
-const directivoApi = {
-  getAll: async () => {
-    const res = await fetch("http://localhost:3001/api/directiva");
-    return res.json();
-  },
-  create: async (data: Directivo) => {
-    const token = localStorage.getItem("auth_token");
-    const res = await fetch("http://localhost:3001/api/directiva", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
-    return res.json();
-  },
-  update: async (id: number, data: Partial<Directivo>) => {
-    const token = localStorage.getItem("auth_token");
-    const res = await fetch(`http://localhost:3001/api/directiva/${id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
-    return res.json();
-  },
-  delete: async (id: number) => {
-    const token = localStorage.getItem("auth_token");
-    const res = await fetch(`http://localhost:3001/api/directiva/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return res.json();
-  },
-};
-
 export default function DirectivaAdminPage() {
-  const [directivos, setDirectivos] = useState<Directivo[]>([]);
+  const [directivos, setDirectivos] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [editando, setEditando] = useState<Directivo | null>(null);
+  const [editando, setEditando] = useState<DirectivoForm | null>(null);
 
   useEffect(() => {
     cargarDatos();
@@ -69,8 +31,12 @@ export default function DirectivaAdminPage() {
 
   const cargarDatos = async () => {
     try {
-      const data = await directivoApi.getAll();
-      setDirectivos(data || []);
+      const { data, error } = await teamApi.getAll();
+      if (error) {
+        toast.error(error);
+      } else {
+        setDirectivos(data || []);
+      }
     } catch (e) {
       console.error(e);
     }
@@ -89,11 +55,31 @@ export default function DirectivaAdminPage() {
       foto_url: editando?.foto_url || "",
     };
 
+    // Note: teamApi doesn't have create/update/delete in lib/api.ts
+    // Using fetch directly for now
+    const token = localStorage.getItem("auth_token");
     let result;
+    
     if (editando?.id) {
-      result = await directivoApi.update(editando.id, data);
+      const res = await fetch(`http://localhost:3001/api/directiva/${editando.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      });
+      result = await res.json();
     } else {
-      result = await directivoApi.create(data);
+      const res = await fetch("http://localhost:3001/api/directiva", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      });
+      result = await res.json();
     }
 
     if (result.detail || result.error) {
@@ -109,7 +95,12 @@ export default function DirectivaAdminPage() {
 
   const eliminar = async (id: number) => {
     if (!confirm("¿Eliminar directivo?")) return;
-    const result = await directivoApi.delete(id);
+    const token = localStorage.getItem("auth_token");
+    const res = await fetch(`http://localhost:3001/api/directiva/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const result = await res.json();
     if (result.detail || result.error) {
       toast.error(result.detail || result.error);
     } else {
@@ -223,7 +214,7 @@ export default function DirectivaAdminPage() {
             <CardHeader className="flex flex-row items-center gap-4">
               <div className="w-20 h-20 rounded-full bg-muted overflow-hidden relative shrink-0">
                 {directivo.foto_url ? (
-                  <Image src={directivo.foto_url} alt={directivo.nombre} fill className="object-cover" 
+                  <Image src={directivo.foto_url || ""} alt={directivo.nombre || ""} fill className="object-cover" 
                     onError={(e) => {(e.target as HTMLImageElement).src = "/placeholder.svg";}}
                   />
                 ) : (
@@ -240,7 +231,13 @@ export default function DirectivaAdminPage() {
                 <p className="text-sm text-muted-foreground mb-4">{directivo.descripcion}</p>
               )}
               <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={() => setEditando(directivo)}>
+<Button variant="outline" size="sm" onClick={() => setEditando({ 
+                  id: directivo.id, 
+                  nombre: directivo.nombre || "", 
+                  cargo: directivo.cargo || "", 
+                  foto_url: directivo.foto_url, 
+                  descripcion: directivo.descripcion 
+                })}>
                   <Pencil className="w-4 h-4" />
                 </Button>
                 <Button variant="destructive" size="sm" onClick={() => eliminar(directivo.id!)}>
