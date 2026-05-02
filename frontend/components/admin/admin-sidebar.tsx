@@ -68,9 +68,11 @@ export function AdminSidebar() {
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-16 bg-sidebar border-b border-sidebar-border flex items-center justify-between px-4">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-            <Shield className="w-4 h-4 text-primary" />
-          </div>
+          <img 
+            src="https://paaekmkjtbdburaxpcsv.supabase.co/storage/v1/object/public/img-club/logos/logoClub.png"
+            alt="Las Torres FC"
+            className="w-8 h-8 object-contain rounded-full"
+          />
           <span className="font-heading text-lg font-bold uppercase">
             Admin
           </span>
@@ -106,9 +108,11 @@ export function AdminSidebar() {
           {/* Logo */}
           <div className="h-16 flex items-center justify-between px-4 border-b border-sidebar-border">
             <Link href="/admin" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                <Shield className="w-5 h-5 text-primary" />
-              </div>
+              <img 
+                src="https://paaekmkjtbdburaxpcsv.supabase.co/storage/v1/object/public/img-club/logos/logoClub.png"
+                alt="Las Torres FC"
+                className="w-10 h-10 object-contain rounded-full"
+              />
               {!collapsed && (
                 <span className="font-heading text-xl font-bold uppercase">
                   Las Torres

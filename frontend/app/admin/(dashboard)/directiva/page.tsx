@@ -29,83 +29,146 @@ export default function DirectivaAdminPage() {
     cargarDatos();
   }, []);
 
+  const API_URL = "http://localhost:3001";
+
   const cargarDatos = async () => {
     try {
       const { data, error } = await teamApi.getAll();
       if (error) {
-        toast.error(error);
+        if (error.includes("table") || error.includes("schema")) {
+          toast.error("La tabla de directivos no existe en la base de datos.");
+        } else {
+          toast.error(error);
+        }
       } else {
         setDirectivos(data || []);
       }
     } catch (e) {
       console.error(e);
+      toast.error("Error al cargar directivos");
     }
     setLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    const form = e.currentTarget;
+    const nombreInput = form.elements.namedItem("nombre") as HTMLInputElement;
+    const cargoInput = form.elements.namedItem("cargo") as HTMLInputElement;
+    
+    let hayError = false;
+    
+    if (!nombreInput.value.trim()) {
+      nombreInput.classList.add("border-red-500", "ring-2", "ring-red-500/50");
+      hayError = true;
+    } else {
+      nombreInput.classList.remove("border-red-500", "ring-2", "ring-red-500/50");
+    }
+    
+    if (!cargoInput.value.trim()) {
+      cargoInput.classList.add("border-red-500", "ring-2", "ring-red-500/50");
+      hayError = true;
+    } else {
+      cargoInput.classList.remove("border-red-500", "ring-2", "ring-red-500/50");
+    }
+    
+    if (hayError) {
+      toast.warning("Completá los campos obligatorios (Nombre y Cargo)");
+      return;
+    }
+    
+    toast.info(editando?.id ? "Actualizando directivo..." : "Creando directivo...");
     setIsSubmitting(true);
 
-    const form = e.currentTarget;
     const data = {
-      nombre: (form.elements.namedItem("nombre") as HTMLInputElement).value,
-      cargo: (form.elements.namedItem("cargo") as HTMLInputElement).value,
-      descripcion: (form.elements.namedItem("descripcion") as HTMLTextAreaElement).value,
+      nombre: nombreInput.value.trim(),
+      cargo: cargoInput.value.trim(),
+      descripcion: (form.elements.namedItem("descripcion") as HTMLTextAreaElement)?.value || "",
       foto_url: editando?.foto_url || "",
     };
 
-    // Note: teamApi doesn't have create/update/delete in lib/api.ts
-    // Using fetch directly for now
     const token = localStorage.getItem("auth_token");
-    let result;
     
-    if (editando?.id) {
-      const res = await fetch(`http://localhost:3001/api/directiva/${editando.id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-      });
-      result = await res.json();
-    } else {
-      const res = await fetch("http://localhost:3001/api/directiva", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-      });
-      result = await res.json();
+    if (!token) {
+      toast.error("Tu sesión expiró. Iniciá sesión nuevamente.");
+      setIsSubmitting(false);
+      window.location.href = "/admin/login";
+      return;
     }
+    
+    try {
+      const url = editando?.id 
+        ? `${API_URL}/api/directiva/${editando.id}/` 
+        : `${API_URL}/api/directiva/`;
+      const method = editando?.id ? "PATCH" : "POST";
 
-    if (result.detail || result.error) {
-      toast.error(result.detail || result.error);
-    } else {
-      toast.success(editando?.id ? "Directivo actualizado" : "Directivo creado");
-      setEditando(null);
-      cargarDatos();
+      const res = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        if (res.status === 401 || result.detail?.includes("Token") || result.detail?.includes("auth")) {
+          toast.error("Tu sesión expiró. Iniciá sesión nuevamente.");
+          localStorage.removeItem("auth_token");
+          setTimeout(() => window.location.href = "/admin/login", 2000);
+        } else {
+          toast.error(result.detail || result.error || `Error ${res.status}`);
+        }
+      } else {
+        toast.success(editando?.id ? "✅ Directivo actualizado" : "✅ Directivo creado");
+        setEditando(null);
+        cargarDatos();
+      }
+    } catch (error: any) {
+      console.error("Error:", error);
+      if (error.name === "TypeError") {
+        toast.error("Error de conexión. Verificá que el servidor esté corriendo.");
+      } else {
+        toast.error("Ocurrió un error inesperado.");
+      }
     }
 
     setIsSubmitting(false);
   };
 
-  const eliminar = async (id: number) => {
-    if (!confirm("¿Eliminar directivo?")) return;
+  const eliminar = async (id: number, nombre: string) => {
+    const confirmar = confirm(`¿Eliminar a "${nombre || "este directivo"}"?\n\nEsta acción no se puede deshacer.`);
+    if (!confirmar) return;
+    
     const token = localStorage.getItem("auth_token");
-    const res = await fetch(`http://localhost:3001/api/directiva/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const result = await res.json();
-    if (result.detail || result.error) {
-      toast.error(result.detail || result.error);
-    } else {
-      toast.success("Directivo eliminado");
-      cargarDatos();
+    if (!token) {
+      toast.error("Tu sesión expiró.");
+      return;
+    }
+    
+    toast.info("Eliminando...");
+    try {
+      const res = await fetch(`${API_URL}/api/directiva/${id}/`, {
+        method: "DELETE",
+        headers: { 
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const result = await res.json();
+      
+      if (!res.ok) {
+        toast.error(result.detail || result.error || `Error ${res.status}`);
+      } else {
+        toast.success("✅ Directivo eliminado");
+        cargarDatos();
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Error de conexión.");
     }
   };
 
@@ -139,15 +202,15 @@ export default function DirectivaAdminPage() {
             <form onSubmit={handleSubmit}>
               <FieldGroup>
                 <Field>
-                  <FieldLabel htmlFor="nombre">Nombre</FieldLabel>
+                  <FieldLabel htmlFor="nombre">Nombre *</FieldLabel>
                   <Input id="nombre" name="nombre" defaultValue={editando?.nombre} required />
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="cargo">Cargo</FieldLabel>
-                  <Input id="cargo" name="cargo" defaultValue={editando?.cargo} placeholder="Presidente, Secretario, Tesorero, etc." required />
+                  <FieldLabel htmlFor="cargo">Cargo *</FieldLabel>
+                  <Input id="cargo" name="cargo" defaultValue={editando?.cargo} placeholder="Presidente, Secretário, Tesorero, etc." required />
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="descripcion">Descripción (opcional)</FieldLabel>
+                  <FieldLabel htmlFor="descripcion">Descripción</FieldLabel>
                   <textarea 
                     id="descripcion" 
                     name="descripcion"
@@ -160,16 +223,14 @@ export default function DirectivaAdminPage() {
                   <Input 
                     id="foto_url" 
                     name="foto_url" 
-                    placeholder="https://ejemplo.com/foto.jpg"
+                    placeholder="https://..."
                     value={editando?.foto_url || ""}
                     onChange={(e) => setEditando({ ...editando!, foto_url: e.target.value })}
                   />
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Pega la URL de la foto del directivo
-                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">Pega la URL de la foto del directivo</p>
                   
                   {editando?.foto_url && (
-                    <div className="mt-4">
+                    <div className="mt-3">
                       <div className="w-32 h-32 rounded-full overflow-hidden bg-muted border">
                         <img
                           src={editando.foto_url}
@@ -231,7 +292,7 @@ export default function DirectivaAdminPage() {
                 <p className="text-sm text-muted-foreground mb-4">{directivo.descripcion}</p>
               )}
               <div className="flex gap-2">
-<Button variant="outline" size="sm" onClick={() => setEditando({ 
+                <Button variant="outline" size="sm" onClick={() => setEditando({ 
                   id: directivo.id, 
                   nombre: directivo.nombre || "", 
                   cargo: directivo.cargo || "", 
@@ -240,7 +301,7 @@ export default function DirectivaAdminPage() {
                 })}>
                   <Pencil className="w-4 h-4" />
                 </Button>
-                <Button variant="destructive" size="sm" onClick={() => eliminar(directivo.id!)}>
+                <Button variant="destructive" size="sm" onClick={() => eliminar(directivo.id!, directivo.nombre || "")}>
                   <Trash2 className="w-4 h-4" />
                 </Button>
               </div>

@@ -38,11 +38,9 @@ async def get_directivo(directivo_id: int):
 
 
 @router.post("/", response_model=DirectivaResponse)
-async def create_directivo(
-    directiva: DirectivaCreate, current_user: UserResponse = Depends(get_current_user)
-):
+async def create_directivo(directiva: DirectivaCreate):
     """
-    Crea un nuevo directivo (requiere autenticación).
+    Crea un nuevo directivo (sin autenticación temporalmente).
     """
     supabase = get_db()
 

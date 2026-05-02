@@ -151,12 +151,21 @@ export default function AdminDashboardPage() {
             Dashboard
           </Badge>
         </div>
-        <h1 className="font-heading text-3xl md:text-4xl font-bold uppercase tracking-tight">
-          Bienvenido {user?.username}
-        </h1>
-        <p className="text-muted-foreground mt-1">
-          Gestiona el contenido de Las Torres FC desde aquí
-        </p>
+        <div className="flex items-center gap-4 mb-4">
+          <img 
+            src="https://paaekmkjtbdburaxpcsv.supabase.co/storage/v1/object/public/img-club/logos/logoClub.png"
+            alt="Las Torres FC"
+            className="w-20 h-20 object-contain rounded-full border-2 border-primary"
+          />
+          <div>
+            <h1 className="font-heading text-3xl md:text-4xl font-bold uppercase tracking-tight">
+              Bienvenido {user?.username}
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              Gestiona el contenido de Las Torres FC desde aquí
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Stats Grid */}
