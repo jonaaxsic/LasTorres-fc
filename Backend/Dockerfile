@@ -23,12 +23,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app/ ./app/
 COPY .env.example .env
 
-# Crear archivo .env con las variables necesarias
-# NOTA: Completar con las credenciales de Supabase
-RUN echo "SUPABASE_URL=https://paaekmkjtbdburaxpcsv.supabase.co" > .env && \
-    echo "SUPABASE_KEY=your-key-here" >> .env && \
-    echo "SUPABASE_SERVICE_KEY=your-service-key" >> .env && \
-    echo "JWT_SECRET=las-torres-fc-jwt-secret-2024" >> .env && \
+# Crear archivo .env con valores por defecto (NO credentials)
+# Las credenciales se pasan en runtime via --env o docker-compose
+RUN echo "SUPABASE_URL=" >> .env && \
+    echo "SUPABASE_KEY=" >> .env && \
+    echo "SUPABASE_SERVICE_KEY=" >> .env && \
+    echo "JWT_SECRET=" >> .env && \
     echo "JWT_ALGORITHM=HS256" >> .env && \
     echo "ACCESS_TOKEN_EXPIRE_MINUTES=60" >> .env && \
     echo "HOST=0.0.0.0" >> .env && \
