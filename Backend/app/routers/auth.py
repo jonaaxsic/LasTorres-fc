@@ -21,12 +21,11 @@ router = APIRouter(prefix="/api/auth", tags=["Auth"])
 
 def _get_session_config() -> dict:
     """Obtiene configuración de cookies según el entorno."""
-    settings = get_settings()
     return {
         "httponly": True,
         "samesite": "lax",
-        "secure": not settings.debug,  # False en desarrollo, True en producción
-        "domain": None,
+        "secure": False,  # Siempre False en desarrollo
+        "domain": "localhost",
     }
 
 
