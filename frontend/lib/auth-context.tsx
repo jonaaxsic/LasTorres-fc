@@ -8,7 +8,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,18 +22,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const checkAuth = async () => {
-    const token = localStorage.getItem("auth_token");
-    if (!token) {
-      setIsLoading(false);
-      return;
-    }
-
+    // Ya no，我们需要 verificar token en localStorage
+    // Simplemente intentamos obtener el usuario desde el backend
+    // El backend lee la cookie automáticamente
     const { data, error } = await authApi.me();
+    
     if (data && !error) {
       setUser(data);
-    } else {
-      localStorage.removeItem("auth_token");
     }
+    // Si hay error, simplemente no hay usuario (session expirada)
     setIsLoading(false);
   };
 
@@ -44,25 +41,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { success: false, error: error || "Error de autenticación" };
     }
 
-    // El backend devuelve accessToken, no access_token
-    const token = data.access_token || data.accessToken;
-    if (!token) {
-      return { success: false, error: "Token no recibido" };
-    }
-    
-    localStorage.setItem("auth_token", token);
-    
-    const { data: userData } = await authApi.me();
-    if (userData) {
-      setUser(userData);
+    // El backend ya setea las cookies, solo necesitamos los datos del usuario
+    // La respuesta ahora tiene { usuario: User }
+    if (data.usuario) {
+      setUser(data.usuario);
       return { success: true };
     }
 
     return { success: false, error: "Error al obtener datos del usuario" };
   };
 
-  const logout = () => {
-    localStorage.removeItem("auth_token");
+  const logout = async () => {
+    // Llamar al endpoint de logout para borrar las cookies
+    await authApi.logout();
     setUser(null);
   };
 

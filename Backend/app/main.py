@@ -1,6 +1,6 @@
 """
 Aplicación principal FastAPI - Las Torres FC Backend.
-Actualizado: 2026-05-02
+Actualizado: 2026-05-03
 """
 
 import logging
@@ -41,6 +41,17 @@ async def lifespan(app: FastAPI):
     # Cierre - limpiar recursos
 
 
+def _get_allowed_origins() -> list[str]:
+    """Obtiene los orígenes permitidos desde la configuración."""
+    settings = get_settings()
+    origins_str = settings.allowed_origins or ""
+    if not origins_str:
+        return ["http://localhost:3000"]  # Default para desarrollo
+
+    # Split por coma y limpiar espacios
+    return [o.strip() for o in origins_str.split(",") if o.strip()]
+
+
 # Crear aplicación FastAPI
 app = FastAPI(
     title="Las Torres FC API",
@@ -49,13 +60,14 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Configurar CORS - permitir todo para desarrollo
+# Configurar CORS - orígenes específicos desde configuración
+allowed_origins = _get_allowed_origins()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,  # orígenes específicos (no "*")
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "Accept", "Cookie"],
 )
 
 # Registrar routers

@@ -180,7 +180,10 @@ export function AdminSidebar() {
                 "w-full justify-start gap-3 text-muted-foreground hover:text-foreground",
                 collapsed && "justify-center px-0"
               )}
-              onClick={logout}
+              onClick={async () => {
+                await logout();
+                window.location.href = "/admin/login";
+              }}
             >
               <LogOut className="w-5 h-5 shrink-0" />
               {!collapsed && <span>Cerrar Sesión</span>}

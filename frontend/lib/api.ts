@@ -1,6 +1,6 @@
 // ============================================
 // API Layer - Las Torres FC
-// Simplyfied para debug
+// Updated: 2026-05-03 (Cookies + Auto-refresh)
 // ============================================
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
@@ -10,42 +10,65 @@ interface ApiResponse<T> {
   error?: string;
 }
 
-// Helper obtener token
-function getAuthToken(): string | null {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem("auth_token");
+// Bandera para evitar múltiples refresh simultáneos
+let isRefreshing = false;
+
+// Intentar renovar el access_token usando el refresh_token
+async function tryRefreshToken(): Promise<boolean> {
+  if (isRefreshing) return false;
+  
+  try {
+    isRefreshing = true;
+    const response = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
+      method: "POST",
+      credentials: "include",  // Importante: envía las cookies
+    });
+    
+    isRefreshing = false;
+    
+    if (response.ok) {
+      return true;
+    }
+    return false;
+  } catch (error) {
+    isRefreshing = false;
+    return false;
+  }
 }
 
-// Fetch simple
+// Fetch con auto-refresh de tokens
 async function fetchApi<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<ApiResponse<T>> {
-  const token = getAuthToken();
-
   const headers: HeadersInit = {
     "Content-Type": "application/json",
     ...options.headers,
   };
 
-  if (token) {
-    (headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
-  }
-
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
       headers,
+      credentials: "include",  // Importante: envía cookies automáticamente
     });
 
-    // Manejar códigos de estado
+    // Manejar 401: intentar refresh y reintentar
     if (response.status === 401) {
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("auth_token");
+      // Si no es el endpoint de refresh/login本身, intentar renovar
+      if (!endpoint.includes("/refresh") && !endpoint.includes("/login")) {
+        const refreshed = await tryRefreshToken();
+        
+        if (refreshed) {
+          // Reintentar la petición original
+          return fetchApi<T>(endpoint, options);
+        }
       }
+      
       return { error: "Sesión expirada" };
     }
 
+    // Manejar otros códigos de error
     if (response.status === 403) {
       return { error: "No tienes permisos" };
     }
@@ -53,6 +76,11 @@ async function fetchApi<T>(
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       return { error: errorData.detail || errorData.message || `Error ${response.status}` };
+    }
+
+    // Para respuestas sin contenido (ej: DELETE)
+    if (response.status === 204) {
+      return { data: undefined as T };
     }
 
     const data = await response.json();
@@ -72,10 +100,7 @@ export interface LoginCredentials {
 }
 
 export interface AuthResponse {
-  access_token: string;
-  accessToken?: string;
-  token_type?: string;
-  expires_in?: number;
+  usuario: User;
 }
 
 export interface User {
@@ -91,11 +116,23 @@ export const authApi = {
   login: (credentials: LoginCredentials) =>
     fetchApi<AuthResponse>("/api/auth/login", {
       method: "POST",
+      credentials: "include",  // Importante
       body: JSON.stringify({
         email: credentials.username,
         password: credentials.password,
       }),
     }),
+
+  logout: async (): Promise<void> => {
+    try {
+      await fetch(`${API_BASE_URL}/api/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch {
+      // Ignorar errores en logout
+    }
+  },
 
   me: () => fetchApi<User>("/api/auth/me"),
 };
@@ -105,11 +142,12 @@ export const authApi = {
 // =====================
 export interface News {
   id: number;
-  title: string;
-  content: string;
-  image_url?: string;
+  titulo: string;
+  contenido: string;
+  imagen_url?: string;
   featured?: boolean;
-  created_at: string;
+  fecha_publicacion?: string;
+  created_at?: string;
 }
 
 export interface NewsCreate {
@@ -120,13 +158,13 @@ export interface NewsCreate {
 }
 
 export const newsApi = {
-  getAll: () => fetchApi<News[]>("/api/news"),
+  getAll: () => fetchApi<News[]>("/api/noticias"),
   getById: (id: number) => fetchApi<News>(`/api/noticias/${id}`),
   create: (data: NewsCreate) =>
     fetchApi<News>("/api/noticias/", {
       method: "POST",
       body: JSON.stringify({
-        titulo: data.title,      // Map title -> titulo
+        titulo: data.title,
         contenido: data.content,
         imagen_url: data.image_url,
         featured: data.featured,
@@ -172,7 +210,7 @@ export interface EventCreate {
 }
 
 export const eventsApi = {
-  getAll: () => fetchApi<Event[]>("/api/events/"),
+  getAll: () => fetchApi<Event[]>("/api/events"),
   getById: (id: number) => fetchApi<Event>(`/api/events/${id}`),
   create: (data: EventCreate) =>
     fetchApi<Event>("/api/events/", {
@@ -224,7 +262,7 @@ export interface MatchCreate {
 }
 
 export const matchesApi = {
-  getAll: () => fetchApi<Match[]>("/api/matches/"),
+  getAll: () => fetchApi<Match[]>("/api/matches"),
   getUpcoming: () => fetchApi<Match[]>("/api/matches/upcoming"),
   getResults: () => fetchApi<Match[]>("/api/matches/results"),
   getById: (id: number) => fetchApi<Match>(`/api/matches/${id}`),
@@ -312,7 +350,9 @@ export interface GalleryImage {
   id: number;
   url: string;
   name?: string;
+  titulo?: string;
   title?: string;
+  descripcion?: string;
   description?: string;
   created_at?: string;
 }
@@ -320,14 +360,13 @@ export interface GalleryImage {
 export const galleryApi = {
   getAll: () => fetchApi<GalleryImage[]>("/api/galeria"),
   upload: (file: File, folder: string = "galeria"): Promise<ApiResponse<{ url: string }>> => {
-    const token = getAuthToken();
     const formData = new FormData();
     formData.append("file", file);
 
     return new Promise((resolve) => {
       fetch(`${API_BASE_URL}/api/upload?folder=${folder}`, {
         method: "POST",
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        credentials: "include",  // Importante: usa cookies
         body: formData,
       })
         .then(async (r) => {
@@ -347,7 +386,7 @@ export const galleryApi = {
 };
 
 // =====================
-// Team
+// Team (Directiva)
 // =====================
 export interface TeamMember {
   id: number;
@@ -366,7 +405,7 @@ export const teamApi = {
 };
 
 // =====================
-// School
+// School (Escuelita)
 // =====================
 export interface SchoolCategory {
   id: number;
@@ -414,16 +453,14 @@ export const clubApi = {
 // Upload helper
 // =====================
 export const uploadFile = async (file: File, folder: string = "noticias"): Promise<ApiResponse<{ url: string }>> => {
-  const token = getAuthToken();
   const formData = new FormData();
   formData.append("file", file);
-  // Pass folder as query param
   formData.append("folder", folder);
 
   return new Promise((resolve) => {
     fetch(`${API_BASE_URL}/api/upload?folder=${folder}`, {
       method: "POST",
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      credentials: "include",  // Importante: usa cookies
       body: formData,
     })
       .then(async (r) => {

@@ -21,7 +21,11 @@ class Settings(BaseSettings):
     # JWT
     jwt_secret: str = "super-secret-key-change-in-production"
     jwt_algorithm: str = "HS256"
-    access_token_expire_minutes: int = 60
+    access_token_expire_minutes: int = 15  # 15 minutos para mayor seguridad
+    refresh_token_expire_days: int = 7  # 7 días para refresh token
+
+    # CORS - orígenes permitidos (separados por coma)
+    allowed_origins: str = "http://localhost:3000"
 
     # Server
     host: str = "0.0.0.0"

@@ -6,7 +6,7 @@ import bcrypt
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 from jose import JWTError, jwt
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.config import get_settings
 from app.db import get_db
@@ -14,8 +14,8 @@ from app.models import UserResponse
 
 settings = get_settings()
 
-# Security scheme
-security = HTTPBearer()
+# Security scheme (para backward compatibility con header)
+security = HTTPBearer(auto_error=False)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -36,9 +36,8 @@ def get_password_hash(password: str) -> str:
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
-    """Crea un token JWT de acceso."""
+    """Crea un token JWT de acceso (15 minutos por defecto)."""
     to_encode = data.copy()
-    # Usar timezone-aware datetime (Pydantic v2 recomendado)
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
     else:
@@ -46,7 +45,21 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
             minutes=settings.access_token_expire_minutes
         )
 
-    to_encode.update({"exp": expire})
+    to_encode.update({"exp": expire, "type": "access"})
+    encoded_jwt = jwt.encode(
+        to_encode, settings.jwt_secret, algorithm=settings.jwt_algorithm
+    )
+    return encoded_jwt
+
+
+def create_refresh_token(data: dict) -> str:
+    """Crea un token JWT de refresh (7 días por defecto)."""
+    to_encode = data.copy()
+    expire = datetime.now(timezone.utc) + timedelta(
+        days=settings.refresh_token_expire_days
+    )
+
+    to_encode.update({"exp": expire, "type": "refresh"})
     encoded_jwt = jwt.encode(
         to_encode, settings.jwt_secret, algorithm=settings.jwt_algorithm
     )
@@ -68,14 +81,39 @@ def decode_token(token: str) -> dict:
         )
 
 
-async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
-) -> UserResponse:
+async def get_current_user(request: Request) -> UserResponse:
     """
-    Obtiene el usuario actual desde el token JWT.
+    Obtiene el usuario actual desde el token en cookie.
+    Lee el token desde la cookie 'access_token' o desde header Authorization.
     """
-    token = credentials.credentials
+    token: Optional[str] = None
+
+    # 1. Intentar leer desde cookie
+    token = request.cookies.get("access_token")
+
+    # 2. Si no hay cookie, intentar desde header Authorization (backward compatibility)
+    if not token:
+        auth_header = request.headers.get("Authorization")
+        if auth_header and auth_header.startswith("Bearer "):
+            token = auth_header[7:]  # Quitar "Bearer "
+
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="No autenticado",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    # Decodificar y validar token
     payload = decode_token(token)
+
+    # Validar que sea un token de acceso (no refresh)
+    if payload.get("type") != "access":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Tipo de token inválido",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
     user_id: int = payload.get("sub")
     if user_id is None:
@@ -96,7 +134,7 @@ async def get_current_user(
     return UserResponse(
         id=user_data["id"],
         nombre=user_data["nombre"],
-        correo=user_data.get("email", ""),  # Map email -> correo
+        correo=user_data.get("email", ""),
         rol=user_data["rol"],
     )
 
