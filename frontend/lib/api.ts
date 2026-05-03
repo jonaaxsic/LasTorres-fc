@@ -145,6 +145,7 @@ export interface News {
   titulo: string;
   contenido: string;
   imagen_url?: string;
+  imagen_url_2?: string;
   imagenUrl?: string;
   featured?: boolean;
   fecha_publicacion?: string;
@@ -154,9 +155,10 @@ export interface News {
 }
 
 export interface NewsCreate {
-  title: string;
-  content: string;
-  image_url?: string;
+  titulo: string;
+  contenido: string;
+  imagen_url?: string;
+  imagen_url_2?: string;
   featured?: boolean;
 }
 
@@ -167,9 +169,10 @@ export const newsApi = {
     fetchApi<News>("/api/noticias/", {
       method: "POST",
       body: JSON.stringify({
-        titulo: data.title,
-        contenido: data.content,
-        imagen_url: data.image_url,
+        titulo: data.titulo,
+        contenido: data.contenido,
+        imagen_url: data.imagen_url,
+        imagen_url_2: data.imagen_url_2,
         featured: data.featured,
       }),
     }),
@@ -177,9 +180,11 @@ export const newsApi = {
     fetchApi<News>(`/api/noticias/${id}`, {
       method: "PATCH",
       body: JSON.stringify({
-        titulo: data.title,
-        contenido: data.content,
-        imagen_url: data.image_url,
+        titulo: data.titulo,
+        contenido: data.contenido,
+        imagen_url: data.imagen_url,
+        imagen_url_2: data.imagen_url_2,
+        featured: data.featured,
       }),
     }),
   delete: (id: number) =>

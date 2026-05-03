@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { AuthProvider, useAuth } from "@/lib/auth-context";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { Spinner } from "@/components/ui/spinner";
+import { Toaster } from "@/components/ui/toaster";
 
 function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -34,6 +35,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
       <main className="lg:pl-64 pt-16 lg:pt-0 min-h-screen">
         <div className="p-4 md:p-6 lg:p-8">{children}</div>
       </main>
+      <Toaster />
     </div>
   );
 }

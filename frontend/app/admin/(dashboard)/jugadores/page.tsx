@@ -42,25 +42,42 @@ export default function JugadoresAdminPage() {
 
     const form = e.currentTarget;
     const data = {
-      name: (form.elements.namedItem("nombre") as HTMLInputElement).value,
-      birthdate: (form.elements.namedItem("fecha") as HTMLInputElement).value,
+      nombre: (form.elements.namedItem("nombre") as HTMLInputElement).value,
+      fecha_nacimiento: (form.elements.namedItem("fecha") as HTMLInputElement).value,
+      foto_url: (form.elements.namedItem("foto") as HTMLInputElement).value,
       categoria_id: parseInt((form.elements.namedItem("categoria") as HTMLSelectElement).value),
       posicion_id: parseInt((form.elements.namedItem("posicion") as HTMLSelectElement).value),
     };
 
-    let result;
-    if (editando) {
-      result = await playersApi.update(editando.id, data);
-    } else {
-      result = await playersApi.create(data);
-    }
+    console.log("Enviando datos:", JSON.stringify(data));
 
-    if (result.error) {
-      toast.error(result.error);
-    } else {
-      toast.success(editando ? "Jugador actualizado" : "Jugador creado");
-      setEditando(null);
-      cargarDatos();
+    try {
+      let result;
+      if (editando?.id) {
+        result = await playersApi.update(editando.id, data);
+      } else {
+        result = await playersApi.create(data);
+      }
+
+      console.log("Resultado API:", result);
+
+      if (result.error) {
+        console.error("Error:", result.error);
+        toast.error(result.error);
+      } else if (result.data) {
+        console.log("Jugador guardado:", result.data);
+        toast.success(editando?.id ? "Jugador actualizado" : "Jugador creado exitosamente");
+        setEditando(null);
+        cargarDatos();
+      } else {
+        console.log("Sin data en resultado");
+        toast.success("Jugador guardado");
+        setEditando(null);
+        cargarDatos();
+      }
+    } catch (err) {
+      console.error("Excepción:", err);
+      toast.error("Error al guardar");
     }
 
     setIsSubmitting(false);
@@ -115,8 +132,12 @@ export default function JugadoresAdminPage() {
                   <Input name="fecha" type="date" defaultValue={editando?.fecha_nacimiento || editando?.birthdate} required />
                 </Field>
                 <Field>
+                  <FieldLabel>URL de Foto</FieldLabel>
+                  <Input name="foto" type="url" defaultValue={editando?.foto_url || editando?.photo_url || ""} placeholder="https://ejemplo.com/foto.jpg" />
+                </Field>
+                <Field>
                   <FieldLabel>Categoría</FieldLabel>
-                  <select name="categoria" className="w-full h-10 px-3 border rounded-md" defaultValue={editando?.categoria_id}>
+                  <select name="categoria" className="w-full h-10 px-3 border rounded-md bg-background text-foreground" defaultValue={editando?.categoria_id}>
                     {categorias.map((c: any) => (
                       <option key={c.id} value={c.id}>{c.nombre}</option>
                     ))}
@@ -124,7 +145,7 @@ export default function JugadoresAdminPage() {
                 </Field>
                 <Field>
                   <FieldLabel>Posición</FieldLabel>
-                  <select name="posicion" className="w-full h-10 px-3 border rounded-md" defaultValue={editando?.posicion_id}>
+                  <select name="posicion" className="w-full h-10 px-3 border rounded-md bg-background text-foreground" defaultValue={editando?.posicion_id}>
                     <option value="1">Portero</option>
                     <option value="2">Defensa</option>
                     <option value="3">Mediocampista</option>

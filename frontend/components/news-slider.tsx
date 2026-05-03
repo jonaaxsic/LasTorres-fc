@@ -12,7 +12,7 @@ interface NewsSliderProps {
   news: News[];
 }
 
-const ITEMS_PER_PAGE = 9;
+const ITEMS_PER_PAGE = 6;
 const ITEMS_PER_ROW = 3;
 
 export function NewsSlider({ news }: NewsSliderProps) {
@@ -69,14 +69,14 @@ export function NewsSlider({ news }: NewsSliderProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {currentNews.map((item: News) => (
           <Link key={item.id} href={`/noticias/${item.id}`} className="block">
-            <div className="h-full bg-card rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+            <div className="h-full bg-card rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden hover:border-red-600 hover:shadow-red-600/40">
               {/* Imagen */}
               <div className="relative aspect-video w-full">
-                {item.image_url ? (
+                {item.imagen_url ? (
                   <>
                     <Image
-                      src={item.image_url}
-                      alt={item.title}
+                      src={item.imagen_url}
+                      alt={item.titulo}
                       fill
                       className="object-cover"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -97,17 +97,17 @@ export function NewsSlider({ news }: NewsSliderProps) {
                 </Badge>
                 
                 <h2 className="font-heading font-bold text-lg line-clamp-2 mb-3">
-                  {item.title}
+                  {item.titulo}
                 </h2>
                 
                 <p className="text-muted-foreground text-sm line-clamp-3 mb-4">
-                  {item.content}
+                  {item.contenido}
                 </p>
                 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-muted-foreground text-xs">
                     <CalendarDays className="w-3 h-3" />
-                    <span>{new Date(item.created_at).toLocaleDateString("es-CL")}</span>
+                    <span>{new Date(item.fecha_publicacion || new Date().toISOString()).toLocaleDateString("es-CL")}</span>
                   </div>
                   
                   <span className="text-primary text-sm font-medium hover:underline flex items-center gap-1">
@@ -198,13 +198,14 @@ function MobileNewsGrid({
       <div className="grid grid-cols-1 gap-6">
         {currentNews.map((item: News) => (
           <Link key={item.id} href={`/noticias/${item.id}`} className="block">
-            <div className="h-full bg-card rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+            <div className="h-full bg-card rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden hover:border-red-600 hover:shadow-red-600/40">
+              {/* Imagen */}
               <div className="relative aspect-video w-full">
-                {item.image_url ? (
+                {item.imagen_url ? (
                   <>
                     <Image
-                      src={item.image_url}
-                      alt={item.title}
+                      src={item.imagen_url}
+                      alt={item.titulo}
                       fill
                       className="object-cover"
                       sizes="100vw"
@@ -218,23 +219,24 @@ function MobileNewsGrid({
                 )}
               </div>
               
+              {/* Contenido */}
               <div className="p-5">
                 <Badge className="w-fit mb-3 text-xs font-medium bg-primary text-white">
                   {item.featured ? "Destacada" : "Noticia"}
                 </Badge>
                 
                 <h2 className="font-heading font-bold text-lg line-clamp-2 mb-3">
-                  {item.title}
+                  {item.titulo}
                 </h2>
                 
                 <p className="text-muted-foreground text-sm line-clamp-3 mb-4">
-                  {item.content}
+                  {item.contenido}
                 </p>
                 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-muted-foreground text-xs">
                     <CalendarDays className="w-3 h-3" />
-                    <span>{new Date(item.created_at).toLocaleDateString("es-CL")}</span>
+                    <span>{new Date(item.fecha_publicacion || new Date().toISOString()).toLocaleDateString("es-CL")}</span>
                   </div>
                   
                   <span className="text-primary text-sm font-medium hover:underline flex items-center gap-1">

@@ -24,39 +24,35 @@ export function NewsForm({ initialData, isEditing = false }: NewsFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState<NewsCreate>({
-    title: initialData?.title || "",
-    content: initialData?.content || "",
-    image_url: initialData?.image_url || "",
+    titulo: initialData?.titulo || "",
+    contenido: initialData?.contenido || "",
+    imagen_url: initialData?.imagen_url || "",
+    imagen_url_2: initialData?.imagen_url_2 || "",
     featured: initialData?.featured || false,
   });
-
-  // Validar que sea URL válida de imagen
-  const isValidImageUrl = (url: string) => {
-    if (!url) return true; // vacío es válido
-    return /\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i.test(url) || 
-           url.includes("supabase.co") ||
-           url.includes("placeholder") ||
-           url.startsWith("http");
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.title.trim()) {
+    if (!formData.titulo.trim()) {
       toast.error("El título es obligatorio");
       return;
     }
 
-    if (!formData.content.trim()) {
+    if (!formData.contenido.trim()) {
       toast.error("El contenido es obligatorio");
       return;
     }
 
     setIsSubmitting(true);
 
+    console.log("Guardando noticia:", formData);
+
     const { data, error } = isEditing && initialData
       ? await newsApi.update(initialData.id, formData)
       : await newsApi.create(formData);
+
+    console.log("Resultado:", data, error);
 
     if (data) {
       toast.success(isEditing ? "Noticia actualizada" : "Noticia creada");
@@ -71,7 +67,7 @@ export function NewsForm({ initialData, isEditing = false }: NewsFormProps) {
   return (
     <form onSubmit={handleSubmit}>
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Main Content */}
+{/* Main Content */}
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
@@ -80,27 +76,27 @@ export function NewsForm({ initialData, isEditing = false }: NewsFormProps) {
             <CardContent>
               <FieldGroup>
                 <Field>
-                  <FieldLabel htmlFor="title">Título</FieldLabel>
+                  <FieldLabel htmlFor="titulo">Título</FieldLabel>
                   <Input
-                    id="title"
+                    id="titulo"
                     placeholder="Título de la noticia"
-                    value={formData.title}
+                    value={formData.titulo}
                     onChange={(e) =>
-                      setFormData({ ...formData, title: e.target.value })
+                      setFormData({ ...formData, titulo: e.target.value })
                     }
                     disabled={isSubmitting}
                   />
                 </Field>
 
                 <Field>
-                  <FieldLabel htmlFor="content">Contenido</FieldLabel>
+                  <FieldLabel htmlFor="contenido">Contenido</FieldLabel>
                   <Textarea
-                    id="content"
+                    id="contenido"
                     placeholder="Escribe el contenido de la noticia..."
                     rows={10}
-                    value={formData.content}
+                    value={formData.contenido}
                     onChange={(e) =>
-                      setFormData({ ...formData, content: e.target.value })
+                      setFormData({ ...formData, contenido: e.target.value })
                     }
                     disabled={isSubmitting}
                   />
@@ -119,26 +115,75 @@ export function NewsForm({ initialData, isEditing = false }: NewsFormProps) {
             </CardHeader>
             <CardContent>
               <Field>
-                <FieldLabel htmlFor="image_url">URL de la imagen</FieldLabel>
+<FieldLabel htmlFor="imagen_url">URL de la imagen</FieldLabel>
+                  <Input
+                    id="imagen_url"
+                    placeholder="https://ejemplo.com/imagen.jpg"
+                    value={formData.imagen_url || ""}
+                    onChange={(e) =>
+                      setFormData({ ...formData, imagen_url: e.target.value })
+                    }
+                    disabled={isSubmitting}
+                  />
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Pega la URL de la imagen (Ej: de Google Drive, Supabase, Cloudinary, etc.)
+                  </p>
+                  
+                  {formData.imagen_url ? (
+                    <div className="mt-4">
+                      <div className="aspect-video rounded-lg overflow-hidden bg-muted">
+                        <img
+                          src={formData.imagen_url}
+                          alt="Preview"
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = "/placeholder.svg";
+                          }}
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="mt-2 w-full"
+                        onClick={() => setFormData({ ...formData, imagen_url: "" })}
+                      >
+                        <X className="w-4 h-4 mr-2" />
+                        Quitar imagen
+                      </Button>
+                    </div>
+                ) : (
+                  <div className="mt-4 flex flex-col items-center justify-center aspect-video rounded-lg border-2 border-dashed border-muted-foreground/25 bg-muted/30">
+                    <Link className="w-10 h-10 text-muted-foreground mb-2" />
+                    <span className="text-sm text-muted-foreground text-center px-4">
+                      Ingresa la URL de la imagen arriba
+                    </span>
+                  </div>
+                )}
+              </Field>
+
+              {/* Segunda imagen */}
+              <Field>
+                <FieldLabel htmlFor="imagen_url_2">Segunda imagen (opcional)</FieldLabel>
                 <Input
-                  id="image_url"
-                  placeholder="https://ejemplo.com/imagen.jpg"
-                  value={formData.image_url || ""}
+                  id="imagen_url_2"
+                  placeholder="https://ejemplo.com/imagen2.jpg"
+                  value={formData.imagen_url_2 || ""}
                   onChange={(e) =>
-                    setFormData({ ...formData, image_url: e.target.value })
+                    setFormData({ ...formData, imagen_url_2: e.target.value })
                   }
                   disabled={isSubmitting}
                 />
                 <p className="text-xs text-muted-foreground mt-2">
-                  Pega la URL de la imagen (Ej: de Google Drive, Supabase, etc.)
+                  Imagen más pequeña que aparece junto con el texto
                 </p>
                 
-                {formData.image_url ? (
+                {formData.imagen_url_2 ? (
                   <div className="mt-4">
-                    <div className="aspect-video rounded-lg overflow-hidden bg-muted">
+                    <div className="h-32 rounded-lg overflow-hidden bg-muted">
                       <img
-                        src={formData.image_url}
-                        alt="Preview"
+                        src={formData.imagen_url_2}
+                        alt="Preview 2"
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = "/placeholder.svg";
@@ -150,20 +195,13 @@ export function NewsForm({ initialData, isEditing = false }: NewsFormProps) {
                       variant="ghost"
                       size="sm"
                       className="mt-2 w-full"
-                      onClick={() => setFormData({ ...formData, image_url: "" })}
+                      onClick={() => setFormData({ ...formData, imagen_url_2: "" })}
                     >
                       <X className="w-4 h-4 mr-2" />
                       Quitar imagen
                     </Button>
                   </div>
-                ) : (
-                  <div className="mt-4 flex flex-col items-center justify-center aspect-video rounded-lg border-2 border-dashed border-muted-foreground/25 bg-muted/30">
-                    <Link className="w-10 h-10 text-muted-foreground mb-2" />
-                    <span className="text-sm text-muted-foreground text-center px-4">
-                      Ingresa la URL de la imagen arriba
-                    </span>
-                  </div>
-                )}
+                ) : null}
               </Field>
             </CardContent>
           </Card>

@@ -36,6 +36,8 @@ export default function NoticiasPage() {
 
   useEffect(() => {
     loadNews();
+    // Test toast - mostrar mensaje al cargar
+    toast.info("Bienvenido al panel de noticias 📰");
   }, []);
 
   const loadNews = async () => {
@@ -53,12 +55,16 @@ export default function NoticiasPage() {
     if (!deleteId) return;
 
     setIsDeleting(true);
+    console.log("Eliminando noticia ID:", deleteId);
+    
     const { error } = await newsApi.delete(deleteId);
+
+    console.log("Resultado delete:", error);
 
     if (error) {
       toast.error("Error al eliminar la noticia");
     } else {
-      toast.success("Noticia eliminada correctamente");
+      toast.success("Noticia eliminada correctamente ✅");
       setNews(news.filter((n) => n.id !== deleteId));
     }
 
@@ -126,11 +132,11 @@ export default function NoticiasPage() {
               <CardContent className="p-4">
                 <div className="flex items-start gap-4">
                   {/* Image */}
-                  {item.image_url ? (
+                  {item.imagen_url ? (
                     <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-muted">
                       <img
-                        src={item.image_url}
-                        alt={item.title}
+                        src={item.imagen_url}
+                        alt={item.titulo}
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -145,7 +151,7 @@ export default function NoticiasPage() {
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-semibold truncate">{item.title}</h3>
+                          <h3 className="font-semibold truncate">{item.titulo}</h3>
                           {item.featured && (
                             <Badge variant="secondary" className="shrink-0">
                               <Star className="w-3 h-3 mr-1" />
@@ -154,11 +160,11 @@ export default function NoticiasPage() {
                           )}
                         </div>
                         <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
-                          {item.content}
+                          {item.contenido}
                         </p>
                         <div className="flex items-center text-xs text-muted-foreground">
                           <Calendar className="w-3 h-3 mr-1" />
-                          {new Date(item.created_at).toLocaleDateString("es-ES", {
+                          {new Date(item.fecha_publicacion || item.created_at || '').toLocaleDateString("es-ES", {
                             day: "numeric",
                             month: "long",
                             year: "numeric",

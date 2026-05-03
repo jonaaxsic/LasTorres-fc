@@ -11,6 +11,12 @@ const nextConfig = {
         hostname: "paaekmkjtbdburaxpcsv.supabase.co",
         pathname: "/storage/v1/object/public/**",
       },
+      // Cloudinary
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
       // Para imágenes placeholder/debug
       {
         protocol: "https",

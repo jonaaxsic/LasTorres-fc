@@ -153,3 +153,24 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* Fix select/option colors */
+select {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+  border-color: var(--border) !important;
+}
+
+select option {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+}
+
+/* Override browser defaults for select */
+select:-webkit-autofill,
+select:-webkit-autofill:hover, 
+select:-webkit-autofill:focus {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+  -webkit-text-fill-color: var(--foreground) !important;
+}

@@ -3,7 +3,6 @@ import { Footer } from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
 import { CalendarDays } from "lucide-react";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
 import { Breadcrumb } from "@/components/breadcrumb";
 
@@ -44,10 +43,48 @@ export default async function NoticiaDetailPage({ params }: Props) {
     notFound();
   }
 
-  const titulo = news.titulo || news.title || "Sin título";
-  const contenido = news.contenido || news.content || "";
-  const imagenUrl = news.image_url || news.imagen_url || null;
+  const titulo = news.titulo || "Sin título";
+  const contenido = news.contenido || "";
+  const imagenUrl = news.imagen_url || null;
+  const imagenUrl2 = news.imagen_url_2 || null;
   const fecha = news.fecha_publicacion || news.created_at || "";
+
+  // Dividir automáticamente por caracteres (560) buscando último punto
+  let texto1 = "";
+  let texto2 = "";
+
+  if (imagenUrl2 && contenido.length > 560) {
+    const limite = 560;
+    let ultimoPunto = -1;
+    
+    for (let i = 0; i < limite; i++) {
+      if (contenido[i] === '.') {
+        ultimoPunto = i;
+      }
+    }
+    
+    if (ultimoPunto > 100) {
+      texto1 = contenido.substring(0, ultimoPunto + 1).trim();
+      texto2 = contenido.substring(ultimoPunto + 1).trim();
+    } else {
+      let ultimoEspacio = -1;
+      for (let i = 0; i < limite; i++) {
+        if (contenido[i] === ' ') {
+          ultimoEspacio = i;
+        }
+      }
+      if (ultimoEspacio > 100) {
+        texto1 = contenido.substring(0, ultimoEspacio).trim();
+        texto2 = contenido.substring(ultimoEspacio + 1).trim();
+      } else {
+        texto1 = "";
+        texto2 = contenido;
+      }
+    }
+  } else {
+    texto1 = "";
+    texto2 = contenido;
+  }
 
   return (
     <>
@@ -70,6 +107,7 @@ export default async function NoticiaDetailPage({ params }: Props) {
             <span>{formatDate(fecha)}</span>
           </div>
 
+          {/* Imagen principal grande */}
           {imagenUrl && (
             <div className="relative w-full aspect-video mb-8">
               <Image
@@ -83,11 +121,45 @@ export default async function NoticiaDetailPage({ params }: Props) {
             </div>
           )}
 
-          <article className="prose prose-lg max-w-none">
-            <p className="text-lg leading-relaxed text-foreground/90 whitespace-pre-wrap">
-              {contenido}
-            </p>
-          </article>
+          {/* Texto 1 */}
+          {texto1 && (
+            <div className="mb-8">
+              <p className="text-lg leading-relaxed text-foreground/90 whitespace-pre-wrap">
+                {texto1}
+              </p>
+            </div>
+          )}
+
+          {/* Segunda imagen */}
+          {imagenUrl2 && (
+            <div className="mb-8">
+              <div className="relative w-full aspect-video">
+                <Image
+                  src={imagenUrl2}
+                  alt={titulo + " - imagen 2"}
+                  fill
+                  className="object-cover rounded-lg"
+                  sizes="(max-width: 768px) 100vw, 800px"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Texto 2 */}
+          {texto2 && (
+            <div className="mb-8">
+              <p className="text-lg leading-relaxed text-foreground/90 whitespace-pre-wrap">
+                {texto2}
+              </p>
+            </div>
+          )}
+
+          {/* Botón volver a noticias */}
+          <div className="mt-8 pt-8">
+            <a href="/noticias" className="inline-block px-4 py-2 bg-primary text-white rounded-lg">
+              ← Volver a Noticias
+            </a>
+          </div>
         </div>
       </main>
       <Footer />

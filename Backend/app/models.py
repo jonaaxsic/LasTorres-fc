@@ -83,6 +83,7 @@ class NoticiaCreate(BaseModel):
     titulo: str = Field(..., min_length=3, max_length=200)
     contenido: str
     imagen_url: Optional[str] = None
+    imagen_url_2: Optional[str] = None  # Segunda imagen para la noticia
     # autor es opcional - la tabla puede no tener esta columna
     autor: Optional[str] = None
 
@@ -93,6 +94,7 @@ class NoticiaUpdate(BaseModel):
     titulo: Optional[str] = None
     contenido: Optional[str] = None
     imagen_url: Optional[str] = None
+    imagen_url_2: Optional[str] = None
     autor: Optional[str] = None
 
 
@@ -105,6 +107,7 @@ class NoticiaResponse(BaseModel):
     titulo: str
     contenido: str
     imagen_url: Optional[str] = None
+    imagen_url_2: Optional[str] = None
     fecha_publicacion: Optional[str] = None
     autor: Optional[str] = None
 

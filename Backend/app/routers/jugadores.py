@@ -116,17 +116,34 @@ async def create_jugador(
     """
     supabase = get_db()
 
-    data = jugador.model_dump()
-    data["fecha_registro"] = datetime.now().isoformat()
+    try:
+        data = jugador.model_dump()
+        data["fecha_registro"] = datetime.now().isoformat()
 
-    response = supabase.table("jugadores").insert(data).execute()
+        print("INSERT JUGADOR DATA:", data)  # Debug
 
-    if not response.data or len(response.data) == 0:
+        response = supabase.table("jugadores").insert(data).execute()
+
+        if response.error:
+            print("SUPABASE ERROR:", response.error)  # Debug
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail=str(response.error)
+            )
+
+        if not response.data or len(response.data) == 0:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Error al crear jugador - sin respuesta",
+            )
+
+        return response.data[0]
+    except HTTPException:
+        raise
+    except Exception as e:
+        print("EXCEPTION CREATE JUGADOR:", str(e))  # Debug
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Error al crear jugador"
+            status_code=status.HTTP_400_BAD_REQUEST, detail=f"Error: {str(e)}"
         )
-
-    return response.data[0]
 
 
 @router.patch("/{jugador_id}", response_model=JugadorResponse)
