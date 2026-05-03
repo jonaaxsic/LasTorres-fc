@@ -2,7 +2,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { teamApi, TeamMember } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import { Breadcrumb } from "@/components/breadcrumb";
 
@@ -39,6 +39,7 @@ export default async function DirectivaPage() {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {team.map((member: TeamMember) => (
                 <Card key={member.id} className="overflow-hidden">
+                  <div className="-mx-6 -mt-6 mb-4"> 
                   {member.photo_url || member.foto_url ? (
                     <div className="relative aspect-square w-full">
                       <Image
@@ -54,21 +55,22 @@ export default async function DirectivaPage() {
                       <span className="text-4xl">👤</span>
                     </div>
                   )}
-                  <CardHeader className="p-4 text-center">
-                    <CardTitle className="text-lg">
+                  </div>
+                  <div className="p-4">
+                    <h3 className="text-lg font-bold text-center">
                       {member.nombre || member.name}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-4 pt-0 text-center">
-                    <span className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
-                      {member.role || member.cargo}
-                    </span>
-                    {member.description && (
-                      <p className="text-muted-foreground text-sm mt-2">
-                        {member.description}
+                    </h3>
+                    <div className="text-center mt-2">
+                      <span className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
+                        {member.role || member.cargo}
+                      </span>
+                    </div>
+                    {(member.description || member.descripcion) && (
+                      <p className="text-muted-foreground text-sm text-center mt-3 italic">
+                        {member.description || member.descripcion}
                       </p>
                     )}
-                  </CardContent>
+                  </div>
                 </Card>
               ))}
             </div>

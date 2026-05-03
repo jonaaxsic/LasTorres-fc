@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { useAuth } from "@/lib/auth-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,8 +10,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FieldGroup, Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
-import { Shield, Eye, EyeOff, ArrowLeft, Home } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft, Home } from "lucide-react";
 import Link from "next/link";
+
+const CLUB_LOGO = "https://paaekmkjtbdburaxpcsv.supabase.co/storage/v1/object/public/img-club/logos/logoClub.png";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -71,11 +74,17 @@ export default function AdminLoginPage() {
       </Link>
 
       <div className="w-full max-w-md">
-        {/* Logo / Branding - Heurística 4: Consistencia - Logo clickeable */}
+        {/* Logo / Branding */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-block group" aria-label="Ir al inicio">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-              <Shield className="w-8 h-8 text-primary" />
+            <div className="w-20 h-20 mx-auto mb-4 relative rounded-full overflow-hidden">
+              <Image
+                src={CLUB_LOGO}
+                alt="Las Torres FC"
+                fill
+                className="object-cover"
+                sizes="80px"
+              />
             </div>
             <h1 className="font-heading text-3xl font-bold uppercase tracking-tight group-hover:text-primary transition-colors">
               Las Torres FC

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
 const sections = [
   {
@@ -51,7 +50,7 @@ const sections = [
 
 export function SectionCards() {
   return (
-    <section className="py-16 md:py-24 px-4">
+    <section className="py-16 md:py-24 px-4 bg-[#2a2a2a]">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <Badge variant="outline" className="mb-4">Explora</Badge>
@@ -70,7 +69,7 @@ export function SectionCards() {
               href={section.href}
               className="group block"
             >
-              <div className="relative rounded-xl overflow-hidden border bg-card transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+              <div className="relative rounded-xl overflow-hidden border bg-card transition-all duration-300 hover:shadow-xl hover:shadow-primary/20 hover:border-primary/50 hover:-translate-y-1 h-full flex flex-col">
                 <div className="relative aspect-video">
                   <div className="absolute inset-0 z-10 bg-black/30 group-hover:bg-black/40 transition-colors" />
                   <img
@@ -79,14 +78,14 @@ export function SectionCards() {
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                   <div className="absolute top-3 left-3 z-20">
-                    <Badge className="bg-primary text-primary-foreground">{section.badge}</Badge>
+                    <Badge className="bg-[#dc2626] text-white font-bold">{section.badge}</Badge>
                   </div>
                 </div>
-                <div className="p-5">
+                <div className="p-5 flex flex-col flex-1">
                   <h3 className="font-heading text-lg font-bold mb-2 group-hover:text-primary transition-colors">
                     {section.title}
                   </h3>
-                  <p className="text-muted-foreground text-sm line-clamp-2">
+                  <p className="text-muted-foreground text-sm line-clamp-2 mt-auto">
                     {section.description}
                   </p>
                 </div>

@@ -275,7 +275,7 @@ export default function DirectivaAdminPage() {
             <CardHeader className="flex flex-row items-center gap-4">
               <div className="w-20 h-20 rounded-full bg-muted overflow-hidden relative shrink-0">
                 {directivo.foto_url ? (
-                  <Image src={directivo.foto_url || ""} alt={directivo.nombre || ""} fill className="object-cover" 
+                  <Image src={directivo.foto_url || ""} alt={directivo.nombre || ""} fill className="object-cover" sizes="80px" 
                     onError={(e) => {(e.target as HTMLImageElement).src = "/placeholder.svg";}}
                   />
                 ) : (

@@ -13,9 +13,13 @@ export default function Home() {
       <Navbar />
       <HeroCarousel />
       <StatsSection />
+      <div className="h-1 bg-gradient-to-b from-[#0a0a0a] to-[#2a2a2a] opacity-30" />
       <NewsSection />
+      <div className="h-1 bg-gradient-to-b from-[#2a2a2a] to-[#0a0a0a] opacity-30" />
       <MatchesSection />
+      <div className="h-2 bg-gradient-to-b from-[#0a0a0a] to-[#2a2a2a] opacity-50" />
       <SectionCards />
+      <div className="h-2 bg-gradient-to-b from-[#2a2a2a] to-[#0a0a0a] opacity-50" />
       <CTASection />
       <Footer />
     </main>

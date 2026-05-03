@@ -2,6 +2,18 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* Wave divider */
+.wave-divider {
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+}
+.wave-divider svg {
+  width: 100%;
+  height: 80px;
+  display: block;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

@@ -152,7 +152,7 @@ export default function JugadoresAdminPage() {
             <CardHeader className="flex flex-row items-center gap-4">
               <div className="w-16 h-16 rounded-full bg-muted overflow-hidden relative">
                 {jugador.foto_url || jugador.photo_url ? (
-                  <Image src={jugador.foto_url || jugador.photo_url} alt={jugador.nombre} fill className="object-cover" />
+                  <Image src={jugador.foto_url || jugador.photo_url} alt={jugador.nombre} fill className="object-cover" sizes="64px" />
                 ) : (
                   <User className="w-8 h-8 m-auto text-muted-foreground" />
                 )}
