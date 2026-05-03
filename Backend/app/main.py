@@ -97,6 +97,20 @@ async def health_check():
     return {"status": "healthy"}
 
 
+@app.get("/debug/supabase")
+async def debug_supabase():
+    """Debug endpoint to check Supabase connection."""
+    from app.config import get_settings
+
+    settings = get_settings()
+    return {
+        "url": settings.supabase_url,
+        "key": settings.supabase_key[:20] + "..."
+        if len(settings.supabase_key) > 20
+        else settings.supabase_key,
+    }
+
+
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     """Manejo global de excepciones."""

@@ -29,7 +29,7 @@ export function NewsSlider({ news }: NewsSliderProps) {
   
   // Ordenar noticias por fecha (más recientes primero)
   const sortedNews = [...news].sort((a, b) => 
-    new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    new Date(b.fecha_publicacion || b.created_at || '').getTime() - new Date(a.fecha_publicacion || a.created_at || '').getTime()
   );
   
   const itemsPerPage = isMobile ? 6 : ITEMS_PER_PAGE;

@@ -17,12 +17,20 @@ async def get_noticias():
     """
     Obtiene todas las noticias.
     """
+    from app.config import get_settings
+
+    settings = get_settings()
+    print(f"DEBUG get_noticias: Using key: {settings.supabase_key}")
+
     supabase = get_db()
     response = (
         supabase.table("noticias")
         .select("*")
         .order("fecha_publicacion", desc=True)
         .execute()
+    )
+    print(
+        f"DEBUG get_noticias: data count: {len(response.data) if response.data else 0}"
     )
     return response.data or []
 

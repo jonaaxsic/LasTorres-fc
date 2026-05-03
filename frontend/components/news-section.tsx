@@ -150,10 +150,10 @@ export function NewsSection() {
               >
                 <div className="h-full rounded-xl overflow-hidden bg-card border border-border/10 hover:shadow-xl hover:shadow-primary/20 hover:border-primary/50 transition-all duration-300">
                   <div className="relative h-36 md:h-48 w-full overflow-hidden">
-                    {item.image_url ? (
+                    {item.imagen_url ? (
                       <img
-                        src={item.image_url}
-                        alt={item.title}
+                        src={item.imagen_url}
+                        alt={item.titulo}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -165,14 +165,14 @@ export function NewsSection() {
                   
                   <div className="p-4 bg-card">
                     <h3 className="font-heading text-base font-bold line-clamp-2 mb-1 text-foreground">
-                      {item.title}
+                      {item.titulo}
                     </h3>
                     <p className="text-muted-foreground text-sm line-clamp-2 mb-3">
-                      {item.content}
+                      {item.contenido}
                     </p>
                     <div className="flex items-center justify-between pt-2 border-t border-border/20">
                       <span className="text-xs text-muted-foreground">
-                        {formatDate(item.created_at)}
+                        {formatDate(item.fecha_publicacion)}
                       </span>
                       <span className="text-xs font-medium text-primary flex items-center gap-1">
                         Ver más <ArrowRight className="w-3 h-3" />

@@ -145,9 +145,12 @@ export interface News {
   titulo: string;
   contenido: string;
   imagen_url?: string;
+  imagenUrl?: string;
   featured?: boolean;
   fecha_publicacion?: string;
+  fechaPublicacion?: string;
   created_at?: string;
+  autor?: string;
 }
 
 export interface NewsCreate {
@@ -158,8 +161,8 @@ export interface NewsCreate {
 }
 
 export const newsApi = {
-  getAll: () => fetchApi<News[]>("/api/noticias"),
-  getById: (id: number) => fetchApi<News>(`/api/noticias/${id}`),
+  getAll: () => fetchApi<News[]>("/api/noticias/"),
+  getById: (id: number) => fetchApi<News>(`/api/noticias/${id}/`),
   create: (data: NewsCreate) =>
     fetchApi<News>("/api/noticias/", {
       method: "POST",

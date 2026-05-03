@@ -8,4 +8,4 @@ if __name__ == "__main__":
     print("📡 Servidor en: http://localhost:3001")
     print("📚 API Docs:   http://localhost:3001/docs")
 
-    uvicorn.run("app.main:app", host="0.0.0.0", port=3001, reload=False, workers=1)
+    uvicorn.run("app.main:app", host="0.0.0.0", port=3001, reload=True, workers=1)

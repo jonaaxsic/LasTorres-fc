@@ -22,6 +22,7 @@ def get_supabase_client() -> Client:
     Crea y retorna el cliente de Supabase.
     """
     settings = _get_settings()
+    print(f"DEBUG: Creating client with key: {settings.supabase_key[:20]}...")
     return create_client(settings.supabase_url, settings.supabase_key)
 
 
