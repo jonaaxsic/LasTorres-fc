@@ -1,5 +1,6 @@
 """
 Aplicación principal FastAPI - Las Torres FC Backend.
+Actualizado: 2026-05-02
 """
 
 import logging

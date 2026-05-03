@@ -3,7 +3,7 @@ Router de directiva (miembros directivos del club).
 """
 
 from fastapi import APIRouter, HTTPException, status, Depends
-from app.db import get_db, get_supabase_admin
+from app.db import get_db
 from app.auth import get_current_user
 from app.models import DirectivaCreate, DirectivaUpdate, DirectivaResponse, UserResponse
 from typing import List
@@ -42,7 +42,7 @@ async def create_directivo(directiva: DirectivaCreate):
     """
     Crea un nuevo directivo (sin autenticación temporalmente).
     """
-    supabase = get_supabase_admin()
+    supabase = get_db()
 
     data = directiva.model_dump()
     response = supabase.table("directiva").insert(data).execute()
@@ -63,7 +63,7 @@ async def update_directivo(
     """
     Actualiza un directivo.
     """
-    supabase = get_supabase_admin()
+    supabase = get_db()
 
     existing = supabase.table("directiva").select("*").eq("id", directivo_id).execute()
     if not existing.data or len(existing.data) == 0:
@@ -87,7 +87,7 @@ async def delete_directivo(directivo_id: int):
     """
     Elimina un directivo.
     """
-    supabase = get_supabase_admin()
+    supabase = get_db()
 
     existing = supabase.table("directiva").select("*").eq("id", directivo_id).execute()
     if not existing.data or len(existing.data) == 0:

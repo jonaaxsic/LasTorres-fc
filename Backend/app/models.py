@@ -29,10 +29,19 @@ class UserCreate(BaseModel):
 
 
 class UserLogin(BaseModel):
-    """Modelo para login - usa 'email' igual que Supabase."""
+    """Modelo para login - acepta 'email' o 'correo'."""
 
-    email: EmailStr
+    model_config = ConfigDict(populate_by_name=True)
+
+    email: Optional[str] = None
+    correo: Optional[str] = None
     password: str
+
+    def __init__(self, **data):
+        # Normalize: usar 'correo' como email si no hay email
+        if "email" not in data or data.get("email") is None:
+            data["email"] = data.get("correo")
+        super().__init__(**data)
 
 
 class UserResponse(BaseModel):
