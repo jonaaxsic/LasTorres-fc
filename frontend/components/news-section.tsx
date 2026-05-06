@@ -7,19 +7,23 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Newspaper, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 
-const CARD_WIDTH_PX = 288;
-const GAP_PX = 16;
-const VISIBLE = 3;
-
 export function NewsSection() {
   const [news, setNews] = useState<News[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const containerRef = useRef(null);
 
   useEffect(() => {
     loadNews();
+  }, []);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   const loadNews = async () => {
@@ -44,10 +48,10 @@ export function NewsSection() {
     });
   };
 
-  // Siempre 2 slides fixed (como estaba antes)
-  const totalSlides = 2;
+  // Desktop: 2 dots. Mobile: 3 dots
+  const totalSlides = isMobile ? 3 : 2;
   const maxIndex = totalSlides - 1;
-  const slideOffset = currentIndex * (CARD_WIDTH_PX + GAP_PX) * VISIBLE;
+  const slideOffset = currentIndex * 912; // 288 * 3 + gaps
 
   const goTo = useCallback((direction: "left" | "right") => {
     if (isTransitioning) return;
@@ -148,7 +152,7 @@ export function NewsSection() {
               className="flex transition-transform duration-400 ease-out"
               style={{
                 transform: `translateX(-${slideOffset}px)`,
-                width: "300%"
+                width: isMobile ? "300%" : "300%"
               }}
             >
               {news.map((item) => (
