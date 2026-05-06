@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
@@ -22,8 +22,10 @@ interface Player {
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 export default function JugadoresPage() {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
+  // Estado inicial: ninguna categoría seleccionada
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState<string | null>(null);
 
   useEffect(() => {
@@ -34,6 +36,17 @@ export default function JugadoresPage() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
+  }, []);
+
+  // Handler para clic fuera - deselecciona categoría
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setCategoriaSeleccionada(null);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // Agrupar por categoría — lógica sin cambios
@@ -49,7 +62,7 @@ export default function JugadoresPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen py-24 px-4">
+      <main className="min-h-screen py-24 px-4" ref={containerRef}>
         <div className="max-w-6xl mx-auto">
           <Breadcrumb />
 
@@ -67,9 +80,9 @@ export default function JugadoresPage() {
             <div className="mt-3 sm:mt-4 h-[2px] sm:h-[3px] w-16 sm:w-20 bg-red-600 rounded-full" />
 
             <p className="text-muted-foreground mt-3 sm:mt-4 text-xs sm:text-sm">
-              {players.length > 0
-                ? `${players.length} jugador${players.length !== 1 ? "es" : ""} registrado${players.length !== 1 ? "s" : ""}`
-                : "Selecciona una categoría para ver sus jugadores"}
+              {categoriaSeleccionada !== null
+                ? `${playersByCategory[categoriaSeleccionada]?.length || 0} jugador${playersByCategory[categoriaSeleccionada]?.length !== 1 ? "es" : ""} en ${categoriaSeleccionada}`
+                : `${players.length > 0 ? `${players.length} jugador${players.length !== 1 ? "es" : ""} en ${categorias.length} categoría${categorias.length !== 1 ? "s" : ""}` : "Selecciona una categoría para ver sus jugadores"}`}
             </p>
           </div>
 
@@ -83,6 +96,66 @@ export default function JugadoresPage() {
               <p className="text-muted-foreground text-lg font-medium">No hay jugadores registrados.</p>
               <p className="text-muted-foreground/60 text-sm mt-1">Vuelve pronto para ver el plantel completo.</p>
             </div>
+          ) : categoriaSeleccionada === null ? (
+            <>
+              {/* ── BOTONES DE CATEGORÍA MEJORADOS ── */}
+              <div className="flex flex-wrap gap-2 sm:gap-3 mb-8 sm:mb-10">
+                {categorias.map((categoria) => {
+                  const activa = categoriaSeleccionada === categoria;
+                  return (
+                    <button
+                      key={categoria}
+                      onClick={() =>
+                        setCategoriaSeleccionada(categoria)
+                      }
+                      className={`
+                        relative px-4 sm:px-7 py-2 sm:py-3 rounded-lg sm:rounded-xl font-black uppercase tracking-widest
+                        text-xs sm:text-sm transition-all duration-300 cursor-pointer
+                        ${activa
+                          ? "bg-red-600 text-white scale-105"
+                          : "border border-white/10 text-white/60 hover:border-red-600/40 hover:text-white bg-transparent"
+                        }
+                      `}
+                      style={
+                        activa
+                          ? { boxShadow: "0 6px 20px rgba(220, 38, 38, 0.35)" }
+                          : {}
+                      }
+                    >
+                      {categoria}
+                      <span
+                        className={`
+                          ml-1.5 sm:ml-2 rounded-full px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-bold
+                          ${activa ? "bg-white/20 text-white" : "bg-white/10 text-white/50"}
+                        `}
+                      >
+                        {playersByCategory[categoria].length}
+                      </span>
+
+                      {/* Punto activo */}
+                      {activa && (
+                        <span className="absolute -top-1 -right-1 w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-red-400 border-2 border-background" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* MENSAJE DE SELECCIÓN */}
+              <div className="text-center py-20 px-4">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/5 mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h7" />
+                  </svg>
+                </div>
+                <p className="text-white/80 text-lg sm:text-xl font-medium mb-2">
+                  Selecciona una categoría
+                </p>
+                <p className="text-white/40 text-sm max-w-md mx-auto">
+                  Elige una de las categorías acima para ver los jugadores que pertenecen a esa plantilla
+                </p>
+              </div>
+            </>
           ) : (
             <>
               {/* ── BOTONES DE CATEGORÍA MEJORADOS ── */}
@@ -93,7 +166,7 @@ export default function JugadoresPage() {
                     <button
                       key={categoria}
                       onClick={() =>
-                        setCategoriaSeleccionada(activa ? null : categoria)
+                        setCategoriaSeleccionada(categoria)
                       }
                       className={`
                         relative px-4 sm:px-7 py-2 sm:py-3 rounded-lg sm:rounded-xl font-black uppercase tracking-widest
@@ -130,7 +203,7 @@ export default function JugadoresPage() {
 
               {/* GRID DE JUGADORES - mismo layout que admin */}
               <div className="flex flex-wrap gap-3 justify-center sm:justify-start">
-                {(categoriaSeleccionada ? playersByCategory[categoriaSeleccionada] : players).map((player) => (
+                {playersByCategory[categoriaSeleccionada].map((player) => (
                   <PlayerCard
                     key={player.id}
                     id={player.id}
