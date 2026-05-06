@@ -124,7 +124,8 @@ async def create_jugador(
 
         response = supabase.table("jugadores").insert(data).execute()
 
-        if response.error:
+        # Verificar errores de Supabase
+        if hasattr(response, "error") and response.error:
             print("SUPABASE ERROR:", response.error)  # Debug
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail=str(response.error)

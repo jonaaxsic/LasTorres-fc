@@ -1,18 +1,46 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { teamApi, TeamMember } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import Image from "next/image";
 import { Breadcrumb } from "@/components/breadcrumb";
+import { DirectivaCard } from "@/components/directiva-card";
 
-async function getTeam() {
-  const { data } = await teamApi.getAll();
-  return data || [];
+const API_URL = "http://localhost:3001";
+
+interface Member {
+  id: number;
+  nombre: string;
+  cargo: string;
+  descripcion?: string;
+  foto_url?: string;
 }
 
-export default async function DirectivaPage() {
-  const team = await getTeam();
+export default function DirectivaPage() {
+  const [members, setMembers] = useState<Member[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    console.log("Fetching from:", `${API_URL}/api/directiva/`);
+    
+    fetch(`${API_URL}/api/directiva/`)
+      .then(res => {
+        console.log("Response:", res);
+        return res.json();
+      })
+      .then(data => {
+        console.log("Data:", data);
+        setMembers(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Error:", err);
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <>
@@ -31,47 +59,23 @@ export default async function DirectivaPage() {
             </p>
           </div>
 
-          {team.length === 0 ? (
-            <div className="text-center py-16 text-muted-foreground">
-              <p>No hay miembros de la directiva registrados.</p>
-            </div>
+          {loading ? (
+            <p>Cargando...</p>
+          ) : error ? (
+            <p className="text-red-500">Error: {error}</p>
+          ) : members.length === 0 ? (
+            <p className="text-muted-foreground">No hay directivos ({members.length})</p>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {team.map((member: TeamMember) => (
-                <Card key={member.id} className="overflow-hidden">
-                  <div className="-mx-6 -mt-6 mb-4"> 
-                  {member.photo_url || member.foto_url ? (
-                    <div className="relative aspect-square w-full">
-                      <Image
-                        src={member.photo_url || member.foto_url || ""}
-                        alt={member.nombre || member.name || "Directivo"}
-                        fill
-                        className="object-cover"
-                        sizes="250px"
-                      />
-                    </div>
-                  ) : (
-                    <div className="aspect-square bg-muted flex items-center justify-center">
-                      <span className="text-4xl">👤</span>
-                    </div>
-                  )}
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-lg font-bold text-center">
-                      {member.nombre || member.name}
-                    </h3>
-                    <div className="text-center mt-2">
-                      <span className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
-                        {member.role || member.cargo}
-                      </span>
-                    </div>
-                    {(member.description || member.descripcion) && (
-                      <p className="text-muted-foreground text-sm text-center mt-3 italic">
-                        {member.description || member.descripcion}
-                      </p>
-                    )}
-                  </div>
-                </Card>
+            <div className="flex flex-wrap gap-3 justify-center sm:justify-start">
+              {members.map((member) => (
+                <DirectivaCard
+                  key={member.id}
+                  id={member.id}
+                  nombre={member.nombre}
+                  cargo={member.cargo}
+                  descripcion={member.descripcion}
+                  foto_url={member.foto_url}
+                />
               ))}
             </div>
           )}

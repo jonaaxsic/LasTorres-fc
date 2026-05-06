@@ -174,3 +174,19 @@ select:-webkit-autofill:focus {
   color: var(--foreground) !important;
   -webkit-text-fill-color: var(--foreground) !important;
 }
+
+/* ── Animación stagger para tarjetas de jugadores ── */
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.player-card-animate {
+  animation: cardIn 0.35s ease both;
+}

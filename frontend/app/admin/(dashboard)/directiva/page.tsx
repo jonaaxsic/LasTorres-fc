@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, User, Link } from "lucide-react";
+import { Plus, Link } from "lucide-react";
 import Image from "next/image";
 import { teamApi, TeamMember } from "@/lib/api";
+import { DirectivaCard } from "@/components/directiva-card";
 
 interface DirectivoForm {
   id?: number;
@@ -269,56 +269,36 @@ export default function DirectivaAdminPage() {
         </Card>
       )}
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="flex flex-wrap gap-3 justify-center sm:justify-start">
         {directivos.map((directivo) => (
-          <Card key={directivo.id}>
-            <CardHeader className="flex flex-row items-center gap-4">
-              <div className="w-20 h-20 rounded-full bg-muted overflow-hidden relative shrink-0">
-                {directivo.foto_url ? (
-                  <Image src={directivo.foto_url || ""} alt={directivo.nombre || ""} fill className="object-cover" sizes="80px" 
-                    onError={(e) => {(e.target as HTMLImageElement).src = "/placeholder.svg";}}
-                  />
-                ) : (
-                  <User className="w-10 h-10 m-auto text-muted-foreground" />
-                )}
-              </div>
-              <div>
-                <CardTitle className="text-lg">{directivo.nombre}</CardTitle>
-                <p className="text-sm text-primary font-medium">{directivo.cargo}</p>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {directivo.descripcion && (
-                <p className="text-sm text-muted-foreground mb-4">{directivo.descripcion}</p>
-              )}
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={() => setEditando({ 
-                  id: directivo.id, 
-                  nombre: directivo.nombre || "", 
-                  cargo: directivo.cargo || "", 
-                  foto_url: directivo.foto_url, 
-                  descripcion: directivo.descripcion 
-                })}>
-                  <Pencil className="w-4 h-4" />
-                </Button>
-                <Button variant="destructive" size="sm" onClick={() => eliminar(directivo.id!, directivo.nombre || "")}>
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <DirectivaCard
+            key={directivo.id}
+            id={directivo.id}
+            nombre={directivo.nombre || ""}
+            cargo={directivo.cargo || ""}
+            descripcion={directivo.descripcion}
+            foto_url={directivo.foto_url}
+            onEdit={(item) => setEditando({ 
+              id: item.id, 
+              nombre: item.nombre, 
+              cargo: item.cargo, 
+              foto_url: item.foto_url, 
+              descripcion: item.descripcion 
+            })}
+            onDelete={(id) => eliminar(id,directivo.nombre || "")}
+            showButtons={true}
+          />
         ))}
       </div>
 
       {directivos.length === 0 && (
-        <Card className="p-8 text-center">
-          <User className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-          <p className="text-muted-foreground">No hay directivos creados</p>
-          <Button className="mt-4" onClick={() => setEditando({ nombre: "", cargo: "", foto_url: "", descripcion: "" })}>
+        <div className="text-center py-16">
+          <p className="text-muted-foreground mb-4">No hay directivos creados</p>
+          <Button onClick={() => setEditando({ nombre: "", cargo: "", foto_url: "", descripcion: "" })}>
             <Plus className="w-4 h-4 mr-2" />
             Crear Primer Directivo
           </Button>
-        </Card>
+        </div>
       )}
     </div>
   );

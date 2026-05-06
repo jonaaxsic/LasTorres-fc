@@ -4,11 +4,10 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { matchesApi, Match } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CalendarDays, ArrowRight, Trophy, CalendarOff, Shield, MapPin, Clock } from "lucide-react";
-import Link from "next/link";
+import { CalendarDays, Trophy, CalendarOff, Shield, MapPin, Clock } from "lucide-react";
+import { ScrollReveal } from "./scroll-reveal";
 
 const CLUB_LOGO = "https://paaekmkjtbdburaxpcsv.supabase.co/storage/v1/object/public/img-club/logos/logoClub.png";
 
@@ -78,17 +77,21 @@ export function MatchesSection() {
     return (
       <section className="py-12 px-4 bg-[#0a0a0a]">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-8">
-            <Badge variant="outline" className="mb-3">Partidos</Badge>
-            <h2 className="font-heading text-3xl md:text-5xl font-bold uppercase tracking-tight">
-              Próximo Partido
-            </h2>
-          </div>
-          <div className="text-center py-12">
-            <CalendarOff className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-            <p className="text-xl font-medium">Aún no tenemos partidos programados</p>
-            <p className="text-muted-foreground mt-2">Pronto anunciaremos nuevos encuentros</p>
-          </div>
+          <ScrollReveal>
+            <div className="text-center mb-8">
+              <Badge variant="outline" className="mb-3">Partidos</Badge>
+              <h2 className="font-heading text-3xl md:text-5xl font-bold uppercase tracking-tight">
+                Próximo Partido
+              </h2>
+            </div>
+          </ScrollReveal>
+          <ScrollReveal delay={0.1}>
+            <div className="text-center py-12">
+              <CalendarOff className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+              <p className="text-xl font-medium">Aún no tenemos partidos programados</p>
+              <p className="text-muted-foreground mt-2">Pronto anunciaremos nuevos encuentros</p>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
     );
@@ -99,62 +102,66 @@ export function MatchesSection() {
     return (
       <section className="py-12 px-4 bg-[#0a0a0a]">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-8">
-            <Badge variant="outline" className="mb-3">Partidos</Badge>
-            <h2 className="font-heading text-3xl md:text-5xl font-bold uppercase tracking-tight">
-              Próximo Partido
-            </h2>
-          </div>
-
-          <Card className="overflow-hidden max-w-md mx-auto">
-            <CardHeader className="py-2 px-3">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <CalendarDays className="w-5 h-5 text-primary" />
+          <ScrollReveal>
+            <div className="text-center mb-8">
+              <Badge variant="outline" className="mb-3">Partidos</Badge>
+              <h2 className="font-heading text-3xl md:text-5xl font-bold uppercase tracking-tight">
                 Próximo Partido
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2 px-3 pb-3">
-              <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <CalendarDays className="w-3 h-3" />
-                  {formatDate(upcomingMatches[0].fecha)}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Clock className="w-3 h-3" />
-                  {upcomingMatches[0].hora}
-                </span>
-                <span className="flex items-center gap-1">
-                  <MapPin className="w-3 h-3" />
-                  {upcomingMatches[0].lugar}
-                </span>
-              </div>
+              </h2>
+            </div>
+          </ScrollReveal>
 
-              {upcomingMatches.map((match) => (
-                <div key={match.id} className="flex items-center justify-between p-2 rounded-md bg-muted/50 border border-border/10">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 relative rounded-full overflow-hidden">
-                      <Image src={CLUB_LOGO} alt="Las Torres" fill className="object-cover" sizes="32px" />
-                    </div>
-                    <span className="text-xs font-medium">Las Torres</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Badge className="bg-[#dc2626] text-white text-[10px] px-1">{match.categoria}</Badge>
-                    <span className="text-xs font-bold">VS</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs">{match.rival}</span>
-                    <div className="w-8 h-8 relative rounded-full overflow-hidden bg-background flex items-center justify-center">
-                      {match.logo_rival ? (
-                        <Image src={match.logo_rival} alt={match.rival} fill className="object-cover" sizes="32px" />
-                      ) : (
-                        <Shield className="w-4 h-4 text-muted-foreground" />
-                      )}
-                    </div>
-                  </div>
+          <ScrollReveal delay={0.1}>
+            <Card className="overflow-hidden max-w-md mx-auto">
+              <CardHeader className="py-2 px-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <CalendarDays className="w-5 h-5 text-primary" />
+                  Próximo Partido
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 px-3 pb-3">
+                <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <CalendarDays className="w-3 h-3" />
+                    {formatDate(upcomingMatches[0].fecha)}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    {upcomingMatches[0].hora}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <MapPin className="w-3 h-3" />
+                    {upcomingMatches[0].lugar}
+                  </span>
                 </div>
-              ))}
-            </CardContent>
-          </Card>
+
+                {upcomingMatches.map((match) => (
+                  <div key={match.id} className="flex items-center justify-between p-2 rounded-md bg-muted/50 border border-border/10">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 relative rounded-full overflow-hidden">
+                        <Image src={CLUB_LOGO} alt="Las Torres" fill className="object-cover" sizes="32px" />
+                      </div>
+                      <span className="text-xs font-medium">Las Torres</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Badge className="bg-[#dc2626] text-white text-[10px] px-1">{match.categoria}</Badge>
+                      <span className="text-xs font-bold">VS</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs">{match.rival}</span>
+                      <div className="w-8 h-8 relative rounded-full overflow-hidden bg-background flex items-center justify-center">
+                        {match.logo_rival ? (
+                          <Image src={match.logo_rival} alt={match.rival} fill className="object-cover" sizes="32px" />
+                        ) : (
+                          <Shield className="w-4 h-4 text-muted-foreground" />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </ScrollReveal>
         </div>
       </section>
     );
@@ -164,101 +171,105 @@ export function MatchesSection() {
   return (
     <section className="py-12 px-4 bg-[#0a0a0a]">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-8">
-          <Badge variant="outline" className="mb-3">Partidos</Badge>
-          <h2 className="font-heading text-3xl md:text-5xl font-bold uppercase tracking-tight">
-            Próximo Partido
-          </h2>
-        </div>
+        <ScrollReveal>
+          <div className="text-center mb-8">
+            <Badge variant="outline" className="mb-3">Partidos</Badge>
+            <h2 className="font-heading text-3xl md:text-5xl font-bold uppercase tracking-tight">
+              Próximo Partido
+            </h2>
+          </div>
+        </ScrollReveal>
 
-<div className="grid grid-cols-1 lg:grid-cols-2 gap-4 max-w-3xl mx-auto">
-          <Card className="overflow-hidden">
-            <CardHeader className="py-2 px-3">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <CalendarDays className="w-5 h-5 text-primary" />
-                Próximo Partido
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2 px-3 pb-3">
-              <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <CalendarDays className="w-3 h-3" />
-                  {formatDate(upcomingMatches[0].fecha)}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Clock className="w-3 h-3" />
-                  {upcomingMatches[0].hora}
-                </span>
-                <span className="flex items-center gap-1">
-                  <MapPin className="w-3 h-3" />
-                  {upcomingMatches[0].lugar}
-                </span>
-              </div>
-
-              {upcomingMatches.slice(0, 1).map((match) => (
-                <div key={match.id} className="flex items-center justify-between p-2 rounded-md bg-muted/50 border border-border/10">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 relative rounded-full overflow-hidden">
-                      <Image src={CLUB_LOGO} alt="Las Torres" fill className="object-cover" sizes="32px" />
-                    </div>
-                    <span className="text-xs font-medium">Las Torres</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Badge className="bg-[#dc2626] text-white text-[10px] px-1">{match.categoria}</Badge>
-                    <span className="text-xs font-bold">VS</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs">{match.rival}</span>
-                    <div className="w-8 h-8 relative rounded-full overflow-hidden bg-background flex items-center justify-center">
-                      {match.logo_rival ? (
-                        <Image src={match.logo_rival} alt={match.rival} fill className="object-cover" sizes="32px" />
-                      ) : (
-                        <Shield className="w-4 h-4 text-muted-foreground" />
-                      )}
-                    </div>
-                  </div>
+        <ScrollReveal delay={0.1}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 max-w-3xl mx-auto">
+            <Card className="overflow-hidden">
+              <CardHeader className="py-2 px-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <CalendarDays className="w-5 h-5 text-primary" />
+                  Próximo Partido
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 px-3 pb-3">
+                <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <CalendarDays className="w-3 h-3" />
+                    {formatDate(upcomingMatches[0].fecha)}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    {upcomingMatches[0].hora}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <MapPin className="w-3 h-3" />
+                    {upcomingMatches[0].lugar}
+                  </span>
                 </div>
-              ))}
-            </CardContent>
-          </Card>
 
-          <Card className="overflow-hidden">
-            <CardHeader className="py-2 px-3">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Trophy className="w-5 h-5 text-primary" />
-                Resultados
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2 px-3 pb-3">
-              {recentResults.map((match) => (
-                <div key={match.id} className="flex items-center justify-between p-2 rounded-md bg-muted/50">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 relative rounded-full overflow-hidden">
-                      <Image src={CLUB_LOGO} alt="Las Torres" fill className="object-cover" sizes="32px" />
+                {upcomingMatches.slice(0, 1).map((match) => (
+                  <div key={match.id} className="flex items-center justify-between p-2 rounded-md bg-muted/50 border border-border/10">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 relative rounded-full overflow-hidden">
+                        <Image src={CLUB_LOGO} alt="Las Torres" fill className="object-cover" sizes="32px" />
+                      </div>
+                      <span className="text-xs font-medium">Las Torres</span>
                     </div>
-                    <span className="text-xs font-medium">Las Torres</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Badge className="bg-[#dc2626] text-white text-[10px] px-1">{match.categoria}</Badge>
-                    <span className="text-xs font-bold bg-primary text-primary-foreground px-1.5 py-0.5 rounded">
-                      {match.marca_local} - {match.marca_visitante}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs">{match.rival}</span>
-                    <div className="w-8 h-8 relative rounded-full overflow-hidden bg-background flex items-center justify-center">
-                      {match.logo_rival ? (
-                        <Image src={match.logo_rival} alt={match.rival} fill className="object-cover" sizes="32px" />
-                      ) : (
-                        <Shield className="w-5 h-5 text-muted-foreground" />
-                      )}
+                    <div className="flex items-center gap-1">
+                      <Badge className="bg-[#dc2626] text-white text-[10px] px-1">{match.categoria}</Badge>
+                      <span className="text-xs font-bold">VS</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs">{match.rival}</span>
+                      <div className="w-8 h-8 relative rounded-full overflow-hidden bg-background flex items-center justify-center">
+                        {match.logo_rival ? (
+                          <Image src={match.logo_rival} alt={match.rival} fill className="object-cover" sizes="32px" />
+                        ) : (
+                          <Shield className="w-4 h-4 text-muted-foreground" />
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            <Card className="overflow-hidden">
+              <CardHeader className="py-2 px-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Trophy className="w-5 h-5 text-primary" />
+                  Resultados
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 px-3 pb-3">
+                {recentResults.map((match) => (
+                  <div key={match.id} className="flex items-center justify-between p-2 rounded-md bg-muted/50">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 relative rounded-full overflow-hidden">
+                        <Image src={CLUB_LOGO} alt="Las Torres" fill className="object-cover" sizes="32px" />
+                      </div>
+                      <span className="text-xs font-medium">Las Torres</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Badge className="bg-[#dc2626] text-white text-[10px] px-1">{match.categoria}</Badge>
+                      <span className="text-xs font-bold bg-primary text-primary-foreground px-1.5 py-0.5 rounded">
+                        {match.marca_local} - {match.marca_visitante}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs">{match.rival}</span>
+                      <div className="w-8 h-8 relative rounded-full overflow-hidden bg-background flex items-center justify-center">
+                        {match.logo_rival ? (
+                          <Image src={match.logo_rival} alt={match.rival} fill className="object-cover" sizes="32px" />
+                        ) : (
+                          <Shield className="w-5 h-5 text-muted-foreground" />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+        </ScrollReveal>
       </div>
     </section>
   );

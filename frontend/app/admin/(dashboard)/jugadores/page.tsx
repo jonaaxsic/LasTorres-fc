@@ -11,7 +11,8 @@ import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
 import { playersApi, Player } from "@/lib/api";
-import { Plus, Pencil, Trash2, User } from "lucide-react";
+import { Plus, Search } from "lucide-react";
+import { PlayerCard } from "@/components/player-card";
 import Image from "next/image";
 
 export default function JugadoresAdminPage() {
@@ -20,7 +21,27 @@ export default function JugadoresAdminPage() {
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editando, setEditando] = useState<Player | null>(null);
-  const [categorias, setCategorias] = useState([]);
+  const [categorias, setCategorias] = useState<any[]>([]);
+  const [busqueda, setBusqueda] = useState("");
+  const [catSeleccionada, setCatSeleccionada] = useState<string | null>(null);
+
+  // Agrupar por categoría
+  const porCategoria: Record<string, Player[]> = {};
+  jugadores.forEach(j => {
+    const cat = j.categoria?.nombre || "Sin categoría";
+    if (!porCategoria[cat]) porCategoria[cat] = [];
+    porCategoria[cat].push(j);
+  });
+  const categoriasKeys = Object.keys(porCategoria);
+
+  // Filtrar por búsqueda o categoría
+  const jugadoresFiltrados = busqueda
+    ? jugadores.filter(j => (j.nombre || j.name || "").toLowerCase().includes(busqueda.toLowerCase()))
+    : catSeleccionada
+      ? porCategoria[catSeleccionada] || []
+      : [];
+
+  const mostrarVacio = !busqueda && !catSeleccionada;
 
   useEffect(() => {
     cargarDatos();
@@ -115,6 +136,38 @@ export default function JugadoresAdminPage() {
         </Button>
       </div>
 
+      {/* Barra de búsqueda */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Input
+          placeholder="Buscar jugador..."
+          value={busqueda}
+          onChange={(e) => { setBusqueda(e.target.value); setCatSeleccionada(null); }}
+          className="pl-10"
+        />
+      </div>
+
+      {/* Botones de categoría */}
+      <div className="flex flex-wrap gap-2">
+        <Button
+          variant={catSeleccionada === null ? "default" : "outline"}
+          size="sm"
+          onClick={() => setCatSeleccionada(null)}
+        >
+          Todos
+        </Button>
+        {categoriasKeys.map(cat => (
+          <Button
+            key={cat}
+            variant={catSeleccionada === cat ? "default" : "outline"}
+            size="sm"
+            onClick={() => catSeleccionada === cat ? setCatSeleccionada(null) : setCatSeleccionada(cat)}
+          >
+            {cat}
+          </Button>
+        ))}
+      </div>
+
       {editando !== null && (
         <Card>
           <CardHeader>
@@ -167,36 +220,29 @@ export default function JugadoresAdminPage() {
         </Card>
       )}
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {jugadores.map((jugador) => (
-          <Card key={jugador.id}>
-            <CardHeader className="flex flex-row items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-muted overflow-hidden relative">
-                {jugador.foto_url || jugador.photo_url ? (
-                  <Image src={jugador.foto_url || jugador.photo_url} alt={jugador.nombre} fill className="object-cover" sizes="64px" />
-                ) : (
-                  <User className="w-8 h-8 m-auto text-muted-foreground" />
-                )}
-              </div>
-              <div>
-                <CardTitle className="text-lg">{jugador.nombre || jugador.name}</CardTitle>
-                <Badge variant="secondary">{jugador.categoria?.nombre || "Sin categoría"}</Badge>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">{jugador.posicion?.nombre}</p>
-              <p className="text-sm text-muted-foreground">{jugador.fecha_nacimiento || jugador.birthdate}</p>
-              <div className="flex gap-2 mt-4">
-                <Button variant="outline" size="sm" onClick={() => setEditando(jugador)}>
-                  <Pencil className="w-4 h-4" />
-                </Button>
-                <Button variant="destructive" size="sm" onClick={() => eliminar(jugador.id)}>
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="flex flex-wrap gap-3 justify-center sm:justify-start">
+        {mostrarVacio ? (
+          <div className="col-span-full text-center py-16 text-muted-foreground">
+            <Search className="w-12 h-12 mx-auto mb-4 opacity-50" />
+            <p>Escribe para buscar un jugador</p>
+          </div>
+        ) : (
+          <>
+            {jugadoresFiltrados.map((jugador) => (
+              <PlayerCard 
+                key={jugador.id}
+                id={jugador.id}
+                nombre={jugador.nombre || jugador.name || ""}
+                categoria={jugador.categoria?.nombre}
+                posicion={jugador.posicion?.nombre}
+                fecha_nacimiento={jugador.fecha_nacimiento}
+                foto_url={jugador.foto_url || jugador.photo_url}
+                onEdit={setEditando}
+                onDelete={eliminar}
+              />
+            ))}
+          </>
+        )}
       </div>
     </div>
   );
