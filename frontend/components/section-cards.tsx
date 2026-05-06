@@ -72,8 +72,8 @@ function AnimatedCard({ section, index }: { section: typeof sections[0]; index: 
               alt={section.title}
               className="w-full h-full object-cover"
             />
-            {/* Difuminado inferior - suave transición hacia el contenido */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+            {/* Difuminado inferior - solo en el borde inferior */}
+            <div className="absolute left-0 right-0 bottom-0 h-16 bg-gradient-to-t from-card to-transparent" />
             <div className="absolute top-3 left-3">
               <Badge className="bg-[#dc2626] text-white font-bold">
                 {section.badge}
