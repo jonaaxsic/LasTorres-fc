@@ -2,8 +2,10 @@ services:
   - type: web
     name: lastorresfc
     runtime: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install -r Backend/requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    repo: https://github.com/jonaaxsic/LasTorres-fc
+    rootDir: Backend
     envVars:
       - key: SUPABASE_URL
         sync: false
@@ -27,3 +29,5 @@ services:
         value: "0.0.0.0"
       - key: PORT
         value: "3001"
+      - key: PYTHONPATH
+        value: "."
