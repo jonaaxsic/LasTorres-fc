@@ -1,12 +1,8 @@
-"use client";
-
-import { useRef } from "react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumb } from "@/components/breadcrumb";
 import Image from "next/image";
-import { ScrollReveal, FadeScale } from "@/components/scroll-reveal";
 
 export default function EscuelitaPage() {
   return (
@@ -17,33 +13,31 @@ export default function EscuelitaPage() {
           <Breadcrumb />
 
           {/* ── HEADER ── */}
-          <ScrollReveal delay={0.1} direction="up">
-            <div className="relative mb-12">
-              <div className="relative w-full aspect-[16/9] md:aspect-[21/9] rounded-xl overflow-hidden mb-6">
-                <Image
-                  src="https://res.cloudinary.com/dyslpppz8/image/upload/q_auto/f_auto/v1777759926/WhatsApp_Image_2026-05-02_at_15.07.30_hjtjpd.jpg"
-                  alt="Escuelita Las Torres FC"
-                  fill
-                  className="object-cover"
-                  sizes="100vw"
-                  priority
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                
-                <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                  <Badge className="mb-3 bg-white/10 backdrop-blur-sm border-0 text-white text-xs font-bold uppercase tracking-widest">
-                    Escuela de Fútbol
-                  </Badge>
-                  <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase text-white leading-none">
-                    Las Torres FC
-                  </h1>
-                </div>
+          <div className="relative mb-12">
+            <div className="relative w-full aspect-[16/9] md:aspect-[21/9] rounded-xl overflow-hidden mb-6">
+              <Image
+                src="https://res.cloudinary.com/dyslpppz8/image/upload/q_auto/f_auto/v1777759926/WhatsApp_Image_2026-05-02_at_15.07.30_hjtjpd.jpg"
+                alt="Escuelita Las Torres FC"
+                fill
+                className="object-cover"
+                sizes="100vw"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              
+              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+                <Badge className="mb-3 bg-white/10 backdrop-blur-sm border-0 text-white text-xs font-bold uppercase tracking-widest">
+                  Escuela de Fútbol
+                </Badge>
+                <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase text-white leading-none">
+                  Las Torres FC
+                </h1>
               </div>
             </div>
-          </ScrollReveal>
+          </div>
 
           {/* ── DESCRIPCIÓN ── */}
-          <ScrollReveal delay={0.2} direction="up" className="mb-16">
+          <div className="mb-16">
             <div className="max-w-3xl">
               <h2 className="font-heading text-2xl md:text-3xl font-bold uppercase mb-4">
                 Nuestra Escuela
@@ -58,47 +52,39 @@ export default function EscuelitaPage() {
                 eviten el uso prolongado del celular y los malos pasos de las drogas.
               </p>
             </div>
-          </ScrollReveal>
+          </div>
 
           {/* ── VALORES (cards con hover rojo) ── */}
-          <ScrollReveal delay={0.3} direction="up" className="mb-16">
+          <div className="mb-16">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <FadeScale delay={0}>
-                <div className="p-4 rounded-lg bg-card border border-white/10 hover:border-red-600 hover:bg-red-600/5 transition-all cursor-pointer group">
-                  <FutbolIcon className="w-8 h-8 mb-3 text-white/70 group-hover:text-red-500 transition-colors" />
-                  <p className="font-bold text-sm uppercase tracking-wide">Deporte</p>
-                  <p className="text-xs text-muted-foreground mt-1">Técnicas de fútbol</p>
-                </div>
-              </FadeScale>
+              <div className="p-4 rounded-lg bg-card border border-white/10 hover:border-red-600 hover:bg-red-600/5 transition-all cursor-pointer group">
+                <FutbolIcon className="w-8 h-8 mb-3 text-white/70 group-hover:text-red-500 transition-colors" />
+                <p className="font-bold text-sm uppercase tracking-wide">Deporte</p>
+                <p className="text-xs text-muted-foreground mt-1">Técnicas de fútbol</p>
+              </div>
               
-              <FadeScale delay={0.1}>
-                <div className="p-4 rounded-lg bg-card border border-white/10 hover:border-red-600 hover:bg-red-600/5 transition-all cursor-pointer group">
-                  <EquipoIcon className="w-8 h-8 mb-3 text-white/70 group-hover:text-red-500 transition-colors" />
-                  <p className="font-bold text-sm uppercase tracking-wide">Equipo</p>
-                  <p className="text-xs text-muted-foreground mt-1">Cooperación</p>
-                </div>
-              </FadeScale>
+              <div className="p-4 rounded-lg bg-card border border-white/10 hover:border-red-600 hover:bg-red-600/5 transition-all cursor-pointer group">
+                <EquipoIcon className="w-8 h-8 mb-3 text-white/70 group-hover:text-red-500 transition-colors" />
+                <p className="font-bold text-sm uppercase tracking-wide">Equipo</p>
+                <p className="text-xs text-muted-foreground mt-1">Cooperación</p>
+              </div>
               
-              <FadeScale delay={0.2}>
-                <div className="p-4 rounded-lg bg-card border border-white/10 hover:border-red-600 hover:bg-red-600/5 transition-all cursor-pointer group">
-                  <CorazonIcon className="w-8 h-8 mb-3 text-white/70 group-hover:text-red-500 transition-colors" />
-                  <p className="font-bold text-sm uppercase tracking-wide">Valores</p>
-                  <p className="text-xs text-muted-foreground mt-1">Respeto y disciplina</p>
-                </div>
-              </FadeScale>
+              <div className="p-4 rounded-lg bg-card border border-white/10 hover:border-red-600 hover:bg-red-600/5 transition-all cursor-pointer group">
+                <CorazonIcon className="w-8 h-8 mb-3 text-white/70 group-hover:text-red-500 transition-colors" />
+                <p className="font-bold text-sm uppercase tracking-wide">Valores</p>
+                <p className="text-xs text-muted-foreground mt-1">Respeto y disciplina</p>
+              </div>
               
-              <FadeScale delay={0.3}>
-                <div className="p-4 rounded-lg bg-card border border-white/10 hover:border-red-600 hover:bg-red-600/5 transition-all cursor-pointer group">
-                  <EscudoIcon className="w-8 h-8 mb-3 text-white/70 group-hover:text-red-500 transition-colors" />
-                  <p className="font-bold text-sm uppercase tracking-wide">Comunidad</p>
-                  <p className="text-xs text-muted-foreground mt-1">Un espacio seguro</p>
-                </div>
-              </FadeScale>
+              <div className="p-4 rounded-lg bg-card border border-white/10 hover:border-red-600 hover:bg-red-600/5 transition-all cursor-pointer group">
+                <EscudoIcon className="w-8 h-8 mb-3 text-white/70 group-hover:text-red-500 transition-colors" />
+                <p className="font-bold text-sm uppercase tracking-wide">Comunidad</p>
+                <p className="text-xs text-muted-foreground mt-1">Un espacio seguro</p>
+              </div>
             </div>
-          </ScrollReveal>
+          </div>
 
           {/* ── INFO: IMAGEN + HORARIO + UBICACIÓN ── */}
-          <ScrollReveal delay={0.4} direction="up" className="mb-16">
+          <div className="mb-16">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               
               {/* Imagen */}
@@ -135,10 +121,10 @@ export default function EscuelitaPage() {
               </div>
 
             </div>
-          </ScrollReveal>
+          </div>
 
           {/* ── INSCRIPCIÓN (minimal, dark) ── */}
-          <ScrollReveal delay={0.5} direction="up" className="mb-16">
+          <div className="mb-16">
             <div className="bg-card p-5 rounded-xl border border-white/10">
               <div className="flex items-center justify-between gap-4">
                 <div>
@@ -153,22 +139,20 @@ export default function EscuelitaPage() {
                 </span>
               </div>
             </div>
-          </ScrollReveal>
+          </div>
 
           {/* ── CTA FINAL ── */}
-          <ScrollReveal delay={0.6} direction="up">
-            <div className="text-center py-8 border-t border-white/10">
-              <p className="text-lg font-medium">
-                ¿Te interesa participar?
-              </p>
-              <p className="text-sm text-muted-foreground mt-2 mb-4">
-                Asiste cualquier sábado a las 10:00 AM con tu ropa deportiva.
-              </p>
-              <p className="text-sm text-white/60">
-                Cancha Las Torres FC • Sábados 10:00 AM
-              </p>
-            </div>
-          </ScrollReveal>
+          <div className="text-center py-8 border-t border-white/10">
+            <p className="text-lg font-medium">
+              ¿Te interesa participar?
+            </p>
+            <p className="text-sm text-muted-foreground mt-2 mb-4">
+              Asiste cualquier sábado a las 10:00 AM con tu ropa deportiva.
+            </p>
+            <p className="text-sm text-white/60">
+              Cancha Las Torres FC • Sábados 10:00 AM
+            </p>
+          </div>
 
         </div>
       </main>

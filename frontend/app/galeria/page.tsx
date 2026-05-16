@@ -1,13 +1,11 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Spinner } from "@/components/ui/spinner";
 import Image from "next/image";
 import { Breadcrumb } from "@/components/breadcrumb";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 interface GalleryImage {
   id: number;
@@ -15,25 +13,20 @@ interface GalleryImage {
   name?: string;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+async function getGaleria() {
+  try {
+    const res = await fetch(`${API_URL}/api/galeria/`, { 
+      cache: "no-store" 
+    });
+    if (!res.ok) return [];
+    return res.json();
+  } catch {
+    return [];
+  }
+}
 
-export default function GaleriaPage() {
-  const [images, setImages] = useState<GalleryImage[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    fetch(`${API_URL}/api/galeria/`)
-      .then(res => res.json())
-      .then(data => {
-        setImages(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        setError(err.message);
-        setLoading(false);
-      });
-  }, []);
+export default async function GaleriaPage() {
+  const images = await getGaleria() as GalleryImage[];
 
   return (
     <>
@@ -49,15 +42,7 @@ export default function GaleriaPage() {
             </h1>
           </div>
 
-          {loading ? (
-            <div className="flex justify-center py-16">
-              <Spinner className="w-8 h-8" />
-            </div>
-          ) : error ? (
-            <div className="text-center py-16 text-red-500">
-              <p>Error: {error}</p>
-            </div>
-          ) : images.length === 0 ? (
+          {images.length === 0 ? (
             <div className="text-center py-16 text-muted-foreground">
               <p>No hay imágenes en la galería.</p>
             </div>

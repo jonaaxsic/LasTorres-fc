@@ -1,13 +1,10 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { DirectivaCard } from "@/components/directiva-card";
 
-const API_URL = "http://localhost:3001";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 interface Member {
   id: number;
@@ -17,30 +14,20 @@ interface Member {
   foto_url?: string;
 }
 
-export default function DirectivaPage() {
-  const [members, setMembers] = useState<Member[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+async function getDirectiva() {
+  try {
+    const res = await fetch(`${API_URL}/api/directiva/`, { 
+      cache: "no-store" 
+    });
+    if (!res.ok) return [];
+    return res.json();
+  } catch {
+    return [];
+  }
+}
 
-  useEffect(() => {
-    console.log("Fetching from:", `${API_URL}/api/directiva/`);
-    
-    fetch(`${API_URL}/api/directiva/`)
-      .then(res => {
-        console.log("Response:", res);
-        return res.json();
-      })
-      .then(data => {
-        console.log("Data:", data);
-        setMembers(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Error:", err);
-        setError(err.message);
-        setLoading(false);
-      });
-  }, []);
+export default async function DirectivaPage() {
+  const members = await getDirectiva() as Member[];
 
   return (
     <>
@@ -59,12 +46,8 @@ export default function DirectivaPage() {
             </p>
           </div>
 
-          {loading ? (
-            <p>Cargando...</p>
-          ) : error ? (
-            <p className="text-red-500">Error: {error}</p>
-          ) : members.length === 0 ? (
-            <p className="text-muted-foreground">No hay directivos ({members.length})</p>
+          {members.length === 0 ? (
+            <p className="text-muted-foreground">No hay directivos</p>
           ) : (
             <div className="flex flex-wrap gap-3 justify-center sm:justify-start">
               {members.map((member) => (

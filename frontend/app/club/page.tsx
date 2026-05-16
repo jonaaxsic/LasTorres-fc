@@ -1,11 +1,8 @@
-"use client";
-
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumb } from "@/components/breadcrumb";
 import Image from "next/image";
-import { ScrollReveal, FadeScale } from "@/components/scroll-reveal";
 
 export default function ClubPage() {
   const clubInfo = {
@@ -36,28 +33,26 @@ export default function ClubPage() {
           <Breadcrumb />
 
           {/* ── HEADER ── */}
-          <ScrollReveal delay={0.1} direction="up">
-            <div className="mb-12">
-              <Badge className="mb-3 bg-white/10 border-0 text-white/70 text-xs font-bold uppercase tracking-widest">
-                Club Socio Cultural
-              </Badge>
-              <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight">
-                Las Torres FC
-              </h1>
-            </div>
-          </ScrollReveal>
+          <div className="mb-12">
+            <Badge className="mb-3 bg-white/10 border-0 text-white/70 text-xs font-bold uppercase tracking-widest">
+              Club Socio Cultural
+            </Badge>
+            <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight">
+              Las Torres FC
+            </h1>
+          </div>
 
           {/* ── FECHA DE FUNDACIÓN (mejorada) ── */}
-          <ScrollReveal delay={0.2} direction="up" className="mb-16">
+          <div className="mb-16">
             <div className="bg-gradient-to-r from-red-900/30 to-transparent p-6 md:p-8 rounded-xl border-l-4 border-red-600">
               <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Fundado el</p>
               <p className="text-xl md:text-2xl font-bold text-red-500">28 de marzo de 2025</p>
               <p className="text-sm text-muted-foreground mt-2">Club Socio Cultural Las Torres FC</p>
             </div>
-          </ScrollReveal>
+          </div>
 
           {/* ── IMAGEN PRINCIPAL ── */}
-          <ScrollReveal delay={0.3} direction="up" className="mb-16">
+          <div className="mb-16">
             <div className="relative w-full aspect-video rounded-xl overflow-hidden">
               <Image
                 src={galeria[0]}
@@ -72,10 +67,10 @@ export default function ClubPage() {
                 <p className="text-white/70 text-sm">{clubInfo.direccion}</p>
               </div>
             </div>
-          </ScrollReveal>
+          </div>
 
           {/* ── HISTORIA ── */}
-          <ScrollReveal delay={0.4} direction="up" className="mb-16">
+          <div className="mb-16">
             <div className="max-w-3xl">
               <h2 className="font-heading text-2xl md:text-3xl font-bold uppercase mb-4">
                 Nuestra Historia
@@ -85,43 +80,39 @@ export default function ClubPage() {
                 {clubInfo.historia}
               </p>
             </div>
-          </ScrollReveal>
+          </div>
 
           {/* ── MISIÓN Y VISIÓN ── */}
-          <ScrollReveal delay={0.5} direction="up" className="mb-16">
+          <div className="mb-16">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FadeScale delay={0}>
-                <div className="bg-card border border-white/10 p-6 rounded-xl">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-full bg-red-600/20 flex items-center justify-center">
-                      <MisionIcon className="w-5 h-5 text-red-500" />
-                    </div>
-                    <h3 className="font-bold text-lg uppercase">Misión</h3>
+              <div className="bg-card border border-white/10 p-6 rounded-xl">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-red-600/20 flex items-center justify-center">
+                    <MisionIcon className="w-5 h-5 text-red-500" />
                   </div>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {clubInfo.mission}
-                  </p>
+                  <h3 className="font-bold text-lg uppercase">Misión</h3>
                 </div>
-              </FadeScale>
+                <p className="text-muted-foreground leading-relaxed">
+                  {clubInfo.mission}
+                </p>
+              </div>
 
-              <FadeScale delay={0.1}>
-                <div className="bg-card border border-white/10 p-6 rounded-xl">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-full bg-red-600/20 flex items-center justify-center">
-                      <VisionIcon className="w-5 h-5 text-red-500" />
-                    </div>
-                    <h3 className="font-bold text-lg uppercase">Visión</h3>
+              <div className="bg-card border border-white/10 p-6 rounded-xl">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-red-600/20 flex items-center justify-center">
+                    <VisionIcon className="w-5 h-5 text-red-500" />
                   </div>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {clubInfo.vision}
-                  </p>
+                  <h3 className="font-bold text-lg uppercase">Visión</h3>
                 </div>
-              </FadeScale>
+                <p className="text-muted-foreground leading-relaxed">
+                  {clubInfo.vision}
+                </p>
+              </div>
             </div>
-          </ScrollReveal>
+          </div>
 
           {/* ── GALERÍA (fotos diferentes) ── */}
-          <ScrollReveal delay={0.6} direction="up" className="mb-16">
+          <div className="mb-16">
             <h2 className="font-heading text-xl md:text-2xl font-bold uppercase mb-6">
               Nuestra Galeria
             </h2>
@@ -138,10 +129,10 @@ export default function ClubPage() {
                 </div>
               ))}
             </div>
-          </ScrollReveal>
+          </div>
 
           {/* ── DIRECCIÓN Y MAPA ── */}
-          <ScrollReveal delay={0.7} direction="up" className="mb-16">
+          <div className="mb-16">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="bg-card/50 border border-white/10 p-6 rounded-xl">
                 <h3 className="font-bold text-lg uppercase mb-4">Nuestra Sede</h3>
@@ -176,20 +167,18 @@ export default function ClubPage() {
                 />
               </div>
             </div>
-          </ScrollReveal>
+          </div>
 
           {/* ── CONTACTO ── */}
-          <ScrollReveal delay={0.8} direction="up">
-            <div className="text-center py-8 border-t border-white/10">
-              <p className="text-lg font-medium mb-2">¿Quieres visitarnos o participar?</p>
-              <p className="text-sm text-muted-foreground">
-                Te esperamos en {clubInfo.direccion}
-              </p>
-              <p className="text-sm text-white/60 mt-1">
-                Los sábados de 10:00 a 12:00 hrs
-              </p>
-            </div>
-          </ScrollReveal>
+          <div className="text-center py-8 border-t border-white/10">
+            <p className="text-lg font-medium mb-2">¿Quieres visitarnos o participar?</p>
+            <p className="text-sm text-muted-foreground">
+              Te esperamos en {clubInfo.direccion}
+            </p>
+            <p className="text-sm text-white/60 mt-1">
+              Los sábados de 10:00 a 12:00 hrs
+            </p>
+          </div>
 
         </div>
       </main>
