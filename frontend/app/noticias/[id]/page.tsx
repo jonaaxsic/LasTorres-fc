@@ -1,23 +1,23 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
 import { CalendarDays } from "lucide-react";
-import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Breadcrumb } from "@/components/breadcrumb";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
-async function getNews(id: number) {
-  const res = await fetch(`${API_URL}/api/noticias/${id}`, { 
-    cache: "no-store" 
-  });
-  if (!res.ok) return null;
-  return res.json();
-}
-
-interface Props {
-  params: Promise<{ id: string }>;
+interface News {
+  id: number;
+  titulo: string;
+  contenido: string;
+  imagen_url: string;
+  imagen_url_2: string;
+  fecha_publicacion: string;
 }
 
 function formatDate(dateStr: string) {
@@ -35,21 +35,58 @@ function formatDate(dateStr: string) {
   }
 }
 
-export default async function NoticiaDetailPage({ params }: Props) {
-  const { id } = await params;
-  const news = await getNews(parseInt(id));
+export default function NoticiaDetailPage() {
+  const params = useParams();
+  const id = params?.id as string;
+  const [news, setNews] = useState<News | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!id) return;
+    
+    fetch(`${API_URL}/api/noticias/${id}`)
+      .then(res => res.json())
+      .then(data => {
+        setNews(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [id]);
+
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <main className="min-h-screen py-24 px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <p>Cargando...</p>
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
 
   if (!news) {
-    notFound();
+    return (
+      <>
+        <Navbar />
+        <main className="min-h-screen py-24 px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <p>Noticia no encontrada</p>
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
   }
 
   const titulo = news.titulo || "Sin título";
   const contenido = news.contenido || "";
   const imagenUrl = news.imagen_url || null;
   const imagenUrl2 = news.imagen_url_2 || null;
-  const fecha = news.fecha_publicacion || news.created_at || "";
+  const fecha = news.fecha_publicacion || "";
 
-  // Dividir automáticamente por caracteres (560) buscando último punto
   let texto1 = "";
   let texto2 = "";
 
@@ -63,103 +100,69 @@ export default async function NoticiaDetailPage({ params }: Props) {
       }
     }
     
-    if (ultimoPunto > 100) {
-      texto1 = contenido.substring(0, ultimoPunto + 1).trim();
-      texto2 = contenido.substring(ultimoPunto + 1).trim();
+    if (ultimoPunto > 0) {
+      texto1 = contenido.substring(0, ultimoPunto + 1);
+      texto2 = contenido.substring(ultimoPunto + 1);
     } else {
-      let ultimoEspacio = -1;
-      for (let i = 0; i < limite; i++) {
-        if (contenido[i] === ' ') {
-          ultimoEspacio = i;
-        }
-      }
-      if (ultimoEspacio > 100) {
-        texto1 = contenido.substring(0, ultimoEspacio).trim();
-        texto2 = contenido.substring(ultimoEspacio + 1).trim();
-      } else {
-        texto1 = "";
-        texto2 = contenido;
-      }
+      texto1 = contenido.substring(0, limite);
+      texto2 = contenido.substring(limite);
     }
   } else {
-    texto1 = "";
-    texto2 = contenido;
+    texto1 = contenido;
   }
 
   return (
     <>
       <Navbar />
       <main className="min-h-screen py-24 px-4">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <Breadcrumb />
           
-          <div className="mb-6">
-            <Badge variant="outline" className="mb-3">
-              Noticia
-            </Badge>
-            <h1 className="font-heading text-3xl md:text-5xl font-bold uppercase tracking-tight">
+          <article className="mt-8">
+            <Badge className="mb-4">Noticias</Badge>
+            
+            <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight mb-4">
               {titulo}
             </h1>
-          </div>
-
-          <div className="flex items-center gap-2 text-muted-foreground mb-8">
-            <CalendarDays className="w-4 h-4" />
-            <span>{formatDate(fecha)}</span>
-          </div>
-
-          {/* Imagen principal grande */}
-          {imagenUrl && (
-            <div className="relative w-full aspect-video mb-8">
-              <Image
-                src={imagenUrl}
-                alt={titulo}
-                fill
-                className="object-cover rounded-lg"
-                sizes="(max-width: 768px) 100vw, 800px"
-                priority
-              />
+            
+            <div className="flex items-center gap-2 text-muted-foreground mb-6">
+              <CalendarDays className="w-4 h-4" />
+              <span className="text-sm">{formatDate(fecha)}</span>
             </div>
-          )}
 
-          {/* Texto 1 */}
-          {texto1 && (
-            <div className="mb-8">
-              <p className="text-lg leading-relaxed text-foreground/90 whitespace-pre-wrap">
-                {texto1}
-              </p>
-            </div>
-          )}
-
-          {/* Segunda imagen */}
-          {imagenUrl2 && (
-            <div className="mb-8">
-              <div className="relative w-full aspect-video">
+            {imagenUrl && (
+              <div className="relative w-full aspect-[16/9] md:aspect-[21/9] rounded-xl overflow-hidden mb-8">
                 <Image
-                  src={imagenUrl2}
-                  alt={titulo + " - imagen 2"}
+                  src={imagenUrl}
+                  alt={titulo}
                   fill
-                  className="object-cover rounded-lg"
-                  sizes="(max-width: 768px) 100vw, 800px"
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
                 />
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Texto 2 */}
-          {texto2 && (
-            <div className="mb-8">
-              <p className="text-lg leading-relaxed text-foreground/90 whitespace-pre-wrap">
-                {texto2}
-              </p>
+            <div className="prose prose-invert max-w-none">
+              <p className="text-lg leading-relaxed whitespace-pre-wrap">{texto1}</p>
+              
+              {texto2 && (
+                <>
+                  {imagenUrl2 && (
+                    <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden my-8">
+                      <Image
+                        src={imagenUrl2}
+                        alt={`${titulo} - imagen 2`}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+                      />
+                    </div>
+                  )}
+                  <p className="text-lg leading-relaxed whitespace-pre-wrap">{texto2}</p>
+                </>
+              )}
             </div>
-          )}
-
-          {/* Botón volver a noticias */}
-          <div className="mt-8 pt-8">
-            <a href="/noticias" className="inline-block px-4 py-2 bg-primary text-white rounded-lg">
-              ← Volver a Noticias
-            </a>
-          </div>
+          </article>
         </div>
       </main>
       <Footer />
