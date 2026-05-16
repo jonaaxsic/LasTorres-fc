@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
-  trailingSlash: true,
-  dynamicParams: true,
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -26,6 +23,9 @@ const nextConfig = {
       },
     ],
   },
+  // For static export - allow dynamic routes
+  output: 'export',
+  trailingSlash: true,
 };
 
 export default nextConfig;

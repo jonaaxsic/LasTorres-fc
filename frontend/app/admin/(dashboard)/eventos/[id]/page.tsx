@@ -11,6 +11,10 @@ import { ArrowLeft, Calendar } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
+export function generateStaticParams() {
+  return [];
+}
+
 export default function EditarEventoPage() {
   const params = useParams();
   const [event, setEvent] = useState<Event | null>(null);
