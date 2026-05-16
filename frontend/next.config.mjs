@@ -23,9 +23,6 @@ const nextConfig = {
       },
     ],
   },
-  // For static export - allow dynamic routes
-  output: 'export',
-  trailingSlash: true,
 };
 
 export default nextConfig;
