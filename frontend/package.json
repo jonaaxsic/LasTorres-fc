@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "next build",
+    "build:cloudflare": "NEXT_TELEMETRY_DISABLED=1 next build",
     "dev": "next dev --turbopack",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "lint": "eslint",
