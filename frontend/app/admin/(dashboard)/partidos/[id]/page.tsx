@@ -11,10 +11,6 @@ import { ArrowLeft, Trophy } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
-export function generateStaticParams() {
-  return [];
-}
-
 export default function EditarPartidoPage() {
   const params = useParams();
   const [match, setMatch] = useState<Match | null>(null);

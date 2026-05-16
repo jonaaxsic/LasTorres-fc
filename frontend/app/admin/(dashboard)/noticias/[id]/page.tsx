@@ -11,10 +11,6 @@ import { ArrowLeft, Newspaper } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
-export function generateStaticParams() {
-  return [];
-}
-
 export default function EditarNoticiaPage() {
   const params = useParams();
   const [news, setNews] = useState<News | null>(null);

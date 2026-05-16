@@ -9,11 +9,6 @@ import { CalendarDays } from "lucide-react";
 import Image from "next/image";
 import { Breadcrumb } from "@/components/breadcrumb";
 
-// Allow dynamic params for static export
-export function generateStaticParams() {
-  return [];
-}
-
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 interface News {
