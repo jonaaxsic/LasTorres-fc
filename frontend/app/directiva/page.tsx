@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
@@ -14,20 +17,19 @@ interface Member {
   foto_url?: string;
 }
 
-async function getDirectiva() {
-  try {
-    const res = await fetch(`${API_URL}/api/directiva/`, { 
-      cache: "no-store" 
-    });
-    if (!res.ok) return [];
-    return res.json();
-  } catch {
-    return [];
-  }
-}
+export default function DirectivaPage() {
+  const [members, setMembers] = useState<Member[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default async function DirectivaPage() {
-  const members = await getDirectiva() as Member[];
+  useEffect(() => {
+    fetch(`${API_URL}/api/directiva/`)
+      .then(res => res.json())
+      .then(data => {
+        setMembers(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
 
   return (
     <>
@@ -42,11 +44,13 @@ export default async function DirectivaPage() {
               Nuestra Directiva
             </h1>
             <p className="text-muted-foreground mt-3">
-              Conoce a los encargados del club
+              Conoce a los encargado del club
             </p>
           </div>
 
-          {members.length === 0 ? (
+          {loading ? (
+            <p>Cargando...</p>
+          ) : members.length === 0 ? (
             <p className="text-muted-foreground">No hay directivos</p>
           ) : (
             <div className="flex flex-wrap gap-3 justify-center sm:justify-start">

@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
@@ -13,20 +16,19 @@ interface GalleryImage {
   name?: string;
 }
 
-async function getGaleria() {
-  try {
-    const res = await fetch(`${API_URL}/api/galeria/`, { 
-      cache: "no-store" 
-    });
-    if (!res.ok) return [];
-    return res.json();
-  } catch {
-    return [];
-  }
-}
+export default function GaleriaPage() {
+  const [images, setImages] = useState<GalleryImage[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default async function GaleriaPage() {
-  const images = await getGaleria() as GalleryImage[];
+  useEffect(() => {
+    fetch(`${API_URL}/api/galeria/`)
+      .then(res => res.json())
+      .then(data => {
+        setImages(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
 
   return (
     <>
@@ -42,13 +44,15 @@ export default async function GaleriaPage() {
             </h1>
           </div>
 
-          {images.length === 0 ? (
+          {loading ? (
+            <p>Cargando...</p>
+          ) : images.length === 0 ? (
             <div className="text-center py-16 text-muted-foreground">
               <p>No hay imágenes en la galería.</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {images.map((img: GalleryImage) => (
+              {images.map((img) => (
                 <Card key={img.id} className="overflow-hidden aspect-square relative group cursor-pointer">
                   <Image
                     src={img.url}
