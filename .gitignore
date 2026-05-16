@@ -39,6 +39,8 @@ tsconfig.tsbuildinfo
 
 # Cloudflare Wrangler (contiene claves)
 wrangler.toml
+wrangler.json
+wrangler.jsonc
 !.wrangler.toml.example
 
 # Null/aux files
