@@ -1,0 +1,27 @@
+# ============================================
+# Cloudflare Wrangler - Plantilla de configuración
+# ============================================
+# COPIAR este archivo a wrangler.toml y completar con tus valores
+# O mejor: configurar las variables en Cloudflare Dashboard > Settings > Environment Variables
+# NO subir este archivo con claves al repo!
+
+name = "lastorresfc"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "frontend/.next"
+
+# ============================================
+# VARIABLES DE ENTORNO - Completar en Cloudflare Dashboard
+# ============================================
+# Ir a: Cloudflare Dashboard > Pages > lastorresfc > Settings > Environment Variables
+#
+# Agregar estas variables:
+# - NEXT_PUBLIC_API_URL = https://lastorresfc.onrender.com
+# - NEXT_PUBLIC_SUPABASE_URL = https://tu-proyecto.supabase.co
+# - NEXT_PUBLIC_SUPABASE_ANON_KEY = tu-clave-anon
+#
+# NO agregar valores aquí - usar el dashboard de Cloudflare
+
+# [vars]
+# NEXT_PUBLIC_API_URL = ""
+# NEXT_PUBLIC_SUPABASE_URL = ""
+# NEXT_PUBLIC_SUPABASE_ANON_KEY = ""

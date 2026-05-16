@@ -1,8 +1,0 @@
-name = "lastorresfc"
-compatibility_date = "2024-01-01"
-pages_build_output_dir = "./frontend/.next"
-
-[vars]
-NEXT_PUBLIC_API_URL = "https://lastorresfc.onrender.com"
-NEXT_PUBLIC_SUPABASE_URL = "https://paaekmkjtbdburaxpcsv.supabase.co"
-NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_RK71cifL35qfpln6D-DtLQ_fPg1_dDp"

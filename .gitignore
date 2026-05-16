@@ -36,3 +36,10 @@ Thumbs.db
 .ruff_cache/
 tsconfig.tsbuildinfo
 *.tsbuildinfo
+
+# Cloudflare Wrangler (contiene claves)
+wrangler.toml
+!.wrangler.toml.example
+
+# Null/aux files
+nul
