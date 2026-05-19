@@ -169,3 +169,7 @@ export default function NoticiaDetailPage() {
     </>
   );
 }
+
+export function generateStaticParams() {
+  return [];
+}
