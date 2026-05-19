@@ -1,9 +1,6 @@
-// Server Component wrapper con generateStaticParams para output: 'export'
 import { getEditarEventoClient } from "./EditarEventoClient";
 
-export function generateStaticParams() {
-  return [];
-}
+export const generateStaticParams = () => Promise.resolve([]);
 
 export const dynamicParams = true;
 

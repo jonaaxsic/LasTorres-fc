@@ -1,12 +1,9 @@
-// Server Component wrapper con generateStaticParams para output: 'export'
 import { getNoticiaDetailClient } from "./NoticiaDetailClient";
 
-// Required for output: 'export' - no pre-generation, client handles routing
-export function generateStaticParams() {
-  return [];
-}
+// Required for output: 'export' - must export generateStaticParams
+export const generateStaticParams = () => Promise.resolve([]);
 
-// Disable dynamic params to avoid build errors in static export mode
+// Allow dynamic routes at runtime
 export const dynamicParams = true;
 
 export default getNoticiaDetailClient;
