@@ -1,6 +1,9 @@
 import type { OpenNextConfig } from '@opennextjs/cloudflare';
 
 const config: OpenNextConfig = {
+  default: {
+    // Empty but required
+  },
   override: {
     // Configuración para Cloudflare Workers
     queue: false,
