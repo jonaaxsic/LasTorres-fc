@@ -97,3 +97,7 @@ export default function EditarEventoPage() {
     </div>
   );
 }
+
+export function generateStaticParams() {
+  return [];
+}
