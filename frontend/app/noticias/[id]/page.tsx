@@ -1,6 +1,9 @@
 import { getNoticiaDetailClient } from "./NoticiaDetailClient";
 
-// Generate static params - returns empty array for output: export
+// Edge runtime required for Cloudflare Workers
+export const runtime = 'edge';
+
+// Generate static params for pre-rendering
 export const generateStaticParams = async () => {
   return [];
 };

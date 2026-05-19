@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
+  // Quitar output: export - OpenNext maneja esto automáticamente
   trailingSlash: true,
   typescript: {
     ignoreBuildErrors: true,
@@ -24,10 +24,6 @@ const nextConfig = {
         pathname: "/**",
       },
     ],
-  },
-  // Configuración para Cloudflare Pages
-  experimental: {
-    // Optimizaciones para static export
   },
 };
 
