@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "next build",
+    "postinstall": "npm rebuild",
     "dev": "next dev --turbopack",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "lint": "eslint",
