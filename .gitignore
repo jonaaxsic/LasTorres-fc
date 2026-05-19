@@ -38,6 +38,10 @@ tsconfig.tsbuildinfo
 *.tsbuildinfo
 
 # Cloudflare Wrangler (contiene claves)
+# Allow root wrangler.toml for OpenNext, but not in subdirectories
+/wrangler.toml
+/wrangler.json
+/wrangler.jsonc
 wrangler.toml
 wrangler.json
 wrangler.jsonc

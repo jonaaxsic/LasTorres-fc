@@ -1,0 +1,9 @@
+name = "lastorresfc"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+[site]
+bucket = "frontend/.open-next/assets"
+
+[env.production]
+name = "lastorresfc"
