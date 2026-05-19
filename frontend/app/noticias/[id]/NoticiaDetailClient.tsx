@@ -1,13 +1,57 @@
-// Server Component wrapper con generateStaticParams para output: 'export'
-// El componente cliente maneja la lógica de runtime
-import { getNoticiaDetailClient } from "./NoticiaDetailClient";
+"use client";
 
-export function generateStaticParams() {
-  // No pre-generar ninguna ruta en build time - el routing se maneja en cliente
-  return [];
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
+import { Badge } from "@/components/ui/badge";
+import { CalendarDays } from "lucide-react";
+import Image from "next/image";
+import { Breadcrumb } from "@/components/breadcrumb";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+
+interface News {
+  id: number;
+  titulo: string;
+  contenido: string;
+  imagen_url: string;
+  imagen_url_2: string;
+  fecha_publicacion: string;
 }
 
-export default getNoticiaDetailClient;
+function formatDate(dateStr: string) {
+  if (!dateStr) return "Fecha no disponible";
+  try {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return "Fecha inválida";
+    return date.toLocaleDateString("es-CL", {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
+  } catch {
+    return "Fecha inválida";
+  }
+}
+
+export function getNoticiaDetailClient() {
+  const params = useParams();
+  const id = params?.id as string;
+  const [news, setNews] = useState<News | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!id) return;
+    
+    fetch(`${API_URL}/api/noticias/${id}`)
+      .then(res => res.json())
+      .then(data => {
+        setNews(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [id]);
 
   if (loading) {
     return (
