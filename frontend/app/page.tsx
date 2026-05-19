@@ -1,3 +1,5 @@
+"use client";
+
 import { Navbar } from "@/components/navbar";
 import { HeroCarousel } from "@/components/hero-carousel";
 import { StatsSection } from "@/components/stats-section";

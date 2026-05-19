@@ -55,8 +55,8 @@ export default function AdminDashboardPage() {
       newsApi.getAll(),
       matchesApi.getAll(),
       eventsApi.getAll(),
-      fetch("http://localhost:3001/api/jugadores").then(r => r.json()).catch(() => []),
-      fetch("http://localhost:3001/api/directiva").then(r => r.json()).catch(() => []),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/jugadores`).then(r => r.json()).catch(() => []),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/directiva`).then(r => r.json()).catch(() => []),
     ]);
 
     if (newsRes.data) {
@@ -255,7 +255,7 @@ export default function AdminDashboardPage() {
                       <Newspaper className="w-5 h-5 text-blue-500" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate">{news.title}</p>
+                      <p className="font-medium text-sm truncate">{news.titulo}</p>
                       <p className="text-xs text-muted-foreground">
                         {new Date(news.created_at).toLocaleDateString("es-ES")}
                       </p>

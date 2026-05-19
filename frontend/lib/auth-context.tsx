@@ -22,7 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const checkAuth = async () => {
-    // Ya no，我们需要 verificar token en localStorage
+    // El token ya no se guarda en localStorage; el backend lo maneja con cookies HttpOnly
     // Simplemente intentamos obtener el usuario desde el backend
     // El backend lee la cookie automáticamente
     const { data, error } = await authApi.me();
