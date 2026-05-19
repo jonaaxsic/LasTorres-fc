@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Quitar output: export - OpenNext maneja esto automáticamente
+  output: 'export',
   trailingSlash: true,
   typescript: {
     ignoreBuildErrors: true,

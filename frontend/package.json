@@ -4,8 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "npx @opennextjs/cloudflare@1 build --skipWranglerConfigCheck",
-    "deploy": "npx @opennextjs/cloudflare@1 deploy --skipWranglerConfigCheck",
+    "build": "next build",
     "dev": "next dev --turbopack",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "lint": "eslint",
