@@ -3,6 +3,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Navbar } from "@/components/navbar";
+
+// Sin dynamicParams, Next.js no trata de generar estas rutas en build time
+// Cloudflare's _redirects redirige todo a index.html, y el cliente maneja el routing
+export const dynamicParams = false;
 import { Footer } from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
 import { CalendarDays } from "lucide-react";

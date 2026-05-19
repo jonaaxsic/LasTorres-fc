@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { eventsApi, Event } from "@/lib/api";
+
+// Sin dynamicParams, Next.js no trata de generar estas rutas en build time
+export const dynamicParams = false;
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
