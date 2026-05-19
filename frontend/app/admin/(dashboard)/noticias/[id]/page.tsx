@@ -1,6 +1,8 @@
 import { getEditarNoticiaClient } from "./EditarNoticiaClient";
 
-export const generateStaticParams = () => Promise.resolve([]);
+export async function generateStaticParams() {
+  return [];
+}
 
 export const dynamicParams = true;
 

@@ -1,7 +1,9 @@
 import { getNoticiaDetailClient } from "./NoticiaDetailClient";
 
-// Required for output: 'export' - must export generateStaticParams
-export const generateStaticParams = () => Promise.resolve([]);
+// Required for output: 'export' - async function returns array
+export async function generateStaticParams() {
+  return [];
+}
 
 // Allow dynamic routes at runtime
 export const dynamicParams = true;

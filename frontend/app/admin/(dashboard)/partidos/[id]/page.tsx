@@ -1,6 +1,8 @@
 import { getEditarPartidoClient } from "./EditarPartidoClient";
 
-export const generateStaticParams = () => Promise.resolve([]);
+export async function generateStaticParams() {
+  return [];
+}
 
 export const dynamicParams = true;
 
