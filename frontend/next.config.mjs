@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
+  // NOT using output: 'export' - using Cloudflare Pages Functions instead
+  // This allows dynamic routes without requiring generateStaticParams
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -23,6 +24,24 @@ const nextConfig = {
         pathname: "/**",
       },
     ],
+  },
+  // Cloudflare Pages compatible configuration
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+        ],
+      },
+    ];
   },
 };
 
