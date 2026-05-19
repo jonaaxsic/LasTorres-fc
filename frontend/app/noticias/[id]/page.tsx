@@ -1,10 +1,12 @@
 // Server Component wrapper con generateStaticParams para output: 'export'
-// El componente cliente maneja la lógica de runtime
 import { getNoticiaDetailClient } from "./NoticiaDetailClient";
 
+// Required for output: 'export' - no pre-generation, client handles routing
 export function generateStaticParams() {
-  // No pre-generar ninguna ruta en build time - el routing se maneja en cliente
   return [];
 }
+
+// Disable dynamic params to avoid build errors in static export mode
+export const dynamicParams = true;
 
 export default getNoticiaDetailClient;
