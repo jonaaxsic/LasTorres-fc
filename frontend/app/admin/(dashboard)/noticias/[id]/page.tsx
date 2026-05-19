@@ -97,7 +97,3 @@ export default function EditarNoticiaPage() {
     </div>
   );
 }
-
-export function generateStaticParams() {
-  return [];
-}

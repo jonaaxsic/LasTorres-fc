@@ -97,7 +97,3 @@ export default function EditarPartidoPage() {
     </div>
   );
 }
-
-export function generateStaticParams() {
-  return [];
-}
