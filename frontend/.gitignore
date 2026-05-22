@@ -15,6 +15,7 @@ pnpm-debug.log*
 # Build
 dist
 build
+.open-next
 
 # Cache
 .ruff_cache

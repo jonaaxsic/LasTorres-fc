@@ -1,3 +1,0 @@
-# Cloudflare Pages redirects for Next.js
-# All routes should be handled by the index.html (SPA fallback)
-/* /index.html 200
