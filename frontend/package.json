@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "postinstall": "node scripts/patch-cloudflare.mjs",
-    "build": "opennextjs-cloudflare build",
+    "build": "next build",
     "dev": "next dev --turbopack",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "lint": "eslint",
     "start": "next start",
     "typecheck": "tsc --noEmit",
+    "cf-build": "opennextjs-cloudflare build",
     "cf-preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "cf-deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
   },
