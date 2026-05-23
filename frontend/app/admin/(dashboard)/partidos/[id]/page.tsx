@@ -1,4 +1,4 @@
-import { getEditarPartidoClient } from "./EditarPartidoClient";
+import EditarPartidoClient from "./EditarPartidoClient";
 
 export const generateStaticParams = async () => {
   return [];
@@ -6,4 +6,4 @@ export const generateStaticParams = async () => {
 
 export const dynamicParams = true;
 
-export default getEditarPartidoClient;
+export default EditarPartidoClient;

@@ -233,6 +233,19 @@ export const eventsApi = {
         tipo_evento: data.event_type || "evento",
       }),
     }),
+  update: (id: number, data: Partial<EventCreate>) =>
+    fetchApi<Event>(`/api/events/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        titulo: data.title,
+        descripcion: data.description,
+        imagen_url: data.image_url,
+        fecha: data.date,
+        hora: data.time,
+        lugar: data.location,
+        tipo_evento: data.event_type,
+      }),
+    }),
   delete: (id: number) =>
     fetchApi<void>(`/api/events/${id}`, {
       method: "DELETE",
@@ -367,28 +380,15 @@ export interface GalleryImage {
 
 export const galleryApi = {
   getAll: () => fetchApi<GalleryImage[]>("/api/galeria"),
-  upload: (file: File, folder: string = "galeria"): Promise<ApiResponse<{ url: string }>> => {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    return new Promise((resolve) => {
-      fetch(`${API_BASE_URL}/api/upload?folder=${folder}`, {
-        method: "POST",
-        credentials: "include",  // Importante: usa cookies
-        body: formData,
-      })
-        .then(async (r) => {
-          if (!r.ok) {
-            const e = await r.json().catch(() => ({}));
-            resolve({ error: e.detail || "Error" });
-            return;
-          }
-          const d = await r.json();
-          resolve({ data: d });
-        })
-        .catch((e) => resolve({ error: e.message }));
-    });
-  },
+  upload: (data: { url: string; title?: string; description?: string }): Promise<ApiResponse<GalleryImage>> =>
+    fetchApi<GalleryImage>("/api/galeria", {
+      method: "POST",
+      body: JSON.stringify({
+        url: data.url,
+        titulo: data.title,
+        descripcion: data.description,
+      }),
+    }),
   delete: (id: number) =>
     fetchApi<void>(`/api/galeria/${id}`, { method: "DELETE" }),
 };

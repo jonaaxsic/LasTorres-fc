@@ -32,6 +32,7 @@ import {
   Trash2,
   Link,
   X,
+  Upload,
 } from "lucide-react";
 import { toast } from "sonner";
 

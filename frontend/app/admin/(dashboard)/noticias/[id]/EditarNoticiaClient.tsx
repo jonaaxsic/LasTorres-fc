@@ -11,7 +11,7 @@ import { ArrowLeft, Newspaper } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
-export function getEditarNoticiaClient() {
+export default function EditarNoticiaClient() {
   const params = useParams();
   const [news, setNews] = useState<News | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -86,7 +86,7 @@ export function getEditarNoticiaClient() {
           </Badge>
         </div>
         <h1 className="font-heading text-3xl md:text-4xl font-bold uppercase tracking-tight">
-          {news.title}
+          {news.titulo}
         </h1>
         <p className="text-muted-foreground mt-1">
           Modifica los campos para actualizar la noticia

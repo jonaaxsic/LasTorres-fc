@@ -1,4 +1,4 @@
-import { getEditarNoticiaClient } from "./EditarNoticiaClient";
+import EditarNoticiaClient from "./EditarNoticiaClient";
 
 export const generateStaticParams = async () => {
   return [];
@@ -6,4 +6,4 @@ export const generateStaticParams = async () => {
 
 export const dynamicParams = true;
 
-export default getEditarNoticiaClient;
+export default EditarNoticiaClient;

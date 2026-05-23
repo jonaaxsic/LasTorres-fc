@@ -11,7 +11,7 @@ import { ArrowLeft, Calendar } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
-export function getEditarEventoClient() {
+export default function EditarEventoClient() {
   const params = useParams();
   const [event, setEvent] = useState<Event | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -86,7 +86,7 @@ export function getEditarEventoClient() {
           </Badge>
         </div>
         <h1 className="font-heading text-3xl md:text-4xl font-bold uppercase tracking-tight">
-          {event.title}
+          {event.titulo}
         </h1>
         <p className="text-muted-foreground mt-1">
           Modifica los campos para actualizar el evento

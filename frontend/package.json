@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build",
-    "postinstall": "npm rebuild",
+    "postinstall": "node scripts/patch-cloudflare.mjs",
+    "build": "opennextjs-cloudflare build",
     "dev": "next dev --turbopack",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "lint": "eslint",
@@ -41,6 +41,7 @@
     "tw-animate-css": "latest",
     "vaul": "^1.1.2"
   },
+  "overrides": {},
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4.1.18",

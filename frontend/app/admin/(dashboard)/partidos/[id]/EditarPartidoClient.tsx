@@ -11,7 +11,7 @@ import { ArrowLeft, Trophy } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
-export function getEditarPartidoClient() {
+export default function EditarPartidoClient() {
   const params = useParams();
   const [match, setMatch] = useState<Match | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -86,7 +86,7 @@ export function getEditarPartidoClient() {
           </Badge>
         </div>
         <h1 className="font-heading text-3xl md:text-4xl font-bold uppercase tracking-tight">
-          vs {match.opponent}
+          vs {match.rival}
         </h1>
         <p className="text-muted-foreground mt-1">
           Modifica los campos para actualizar el partido

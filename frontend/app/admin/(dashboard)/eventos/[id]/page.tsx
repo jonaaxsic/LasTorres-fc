@@ -1,4 +1,4 @@
-import { getEditarEventoClient } from "./EditarEventoClient";
+import EditarEventoClient from "./EditarEventoClient";
 
 export const generateStaticParams = async () => {
   return [];
@@ -6,4 +6,4 @@ export const generateStaticParams = async () => {
 
 export const dynamicParams = true;
 
-export default getEditarEventoClient;
+export default EditarEventoClient;

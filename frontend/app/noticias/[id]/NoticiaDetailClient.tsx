@@ -35,7 +35,7 @@ function formatDate(dateStr: string) {
   }
 }
 
-export function getNoticiaDetailClient() {
+export default function NoticiaDetailClient() {
   const params = useParams();
   const id = params?.id as string;
   const [news, setNews] = useState<News | null>(null);
