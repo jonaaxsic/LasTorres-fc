@@ -1,0 +1,6 @@
+# Wrangler configuration for Cloudflare Pages
+# This file is read by Cloudflare Pages to configure build and deployment
+name = "lastorresfc"
+pages_build_output_dir = ".open-next"
+compatibility_date = "2024-12-30"
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]

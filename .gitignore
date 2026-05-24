@@ -47,6 +47,7 @@ wrangler.json
 wrangler.jsonc
 !.wrangler.toml.example
 !frontend/wrangler.jsonc
+!frontend/wrangler.toml
 
 # Null/aux files
 nul

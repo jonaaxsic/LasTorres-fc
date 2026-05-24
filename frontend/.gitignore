@@ -21,6 +21,7 @@ build
 
 # Cache
 .ruff_cache
+.wrangler
 .tsconfig.tsbuildinfo
 *.tsbuildinfo
 
