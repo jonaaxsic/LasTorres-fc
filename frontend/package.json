@@ -11,7 +11,7 @@
     "lint": "eslint",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "cf-build": "opennextjs-cloudflare build",
+    "cf-build": "opennextjs-cloudflare build && node -e \"const fs=require('fs'); fs.cpSync('.open-next/worker.js', '.open-next/_worker.js')\"",
     "cf-preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "cf-deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
   },
