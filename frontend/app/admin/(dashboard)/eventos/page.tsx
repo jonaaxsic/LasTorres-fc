@@ -68,7 +68,7 @@ export default function EventosPage() {
     if (error) {
       toast.error("Error al eliminar el evento");
     } else {
-      toast.success("Evento eliminado correctamente");
+      toast.success("✅ Evento eliminado correctamente");
       setEvents(events.filter((e) => e.id !== deleteId));
     }
 

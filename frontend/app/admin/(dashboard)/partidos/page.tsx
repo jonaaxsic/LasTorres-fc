@@ -69,7 +69,7 @@ export default function PartidosPage() {
     if (error) {
       toast.error("Error al eliminar el partido");
     } else {
-      toast.success("Partido eliminado correctamente");
+      toast.success("✅ Partido eliminado correctamente");
       setMatches(matches.filter((m) => m.id !== deleteId));
     }
 

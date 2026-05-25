@@ -102,7 +102,7 @@ export function EventForm({ initialData, isEditing = false }: EventFormProps) {
       : await eventsApi.create(formData);
 
     if (data) {
-      toast.success(isEditing ? "Evento actualizado" : "Evento creado");
+      toast.success(isEditing ? "✅ Evento actualizado correctamente" : "✅ Evento creado correctamente");
       router.push("/admin/eventos");
     } else {
       toast.error(error || "Error al guardar el evento");

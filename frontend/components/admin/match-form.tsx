@@ -73,7 +73,7 @@ export function MatchForm({ initialData, isEditing = false }: MatchFormProps) {
       : await matchesApi.create(formData);
 
     if (data) {
-      toast.success(isEditing ? "Partido actualizado" : "Partido creado");
+      toast.success(isEditing ? "✅ Partido actualizado correctamente" : "✅ Partido creado correctamente");
       router.push("/admin/partidos");
     } else {
       toast.error(error || "Error al guardar el partido");

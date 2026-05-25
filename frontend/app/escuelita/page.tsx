@@ -5,16 +5,20 @@ import { Footer } from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumb } from "@/components/breadcrumb";
 import Image from "next/image";
+import { BackgroundEffects } from "@/components/background-effects";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 export default function EscuelitaPage() {
   return (
     <>
+      <BackgroundEffects />
       <Navbar />
       <main className="min-h-screen py-24 px-4">
         <div className="max-w-6xl mx-auto">
           <Breadcrumb />
 
           {/* ── HEADER ── */}
+          <ScrollReveal delay={0.1}>
           <div className="relative mb-12">
             <div className="relative w-full aspect-[16/9] md:aspect-[21/9] rounded-xl overflow-hidden mb-6">
               <Image
@@ -37,8 +41,10 @@ export default function EscuelitaPage() {
               </div>
             </div>
           </div>
+          </ScrollReveal>
 
           {/* ── DESCRIPCIÓN ── */}
+          <ScrollReveal delay={0.15}>
           <div className="mb-16">
             <div className="max-w-3xl">
               <h2 className="font-heading text-2xl md:text-3xl font-bold uppercase mb-4">
@@ -55,8 +61,10 @@ export default function EscuelitaPage() {
               </p>
             </div>
           </div>
+          </ScrollReveal>
 
           {/* ── VALORES (cards con hover rojo) ── */}
+          <ScrollReveal delay={0.2}>
           <div className="mb-16">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <div className="p-4 rounded-lg bg-card border border-white/10 hover:border-red-600 hover:bg-red-600/5 transition-all cursor-pointer group">
@@ -84,8 +92,10 @@ export default function EscuelitaPage() {
               </div>
             </div>
           </div>
+          </ScrollReveal>
 
           {/* ── INFO: IMAGEN + HORARIO + UBICACIÓN ── */}
+          <ScrollReveal delay={0.25}>
           <div className="mb-16">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               
@@ -124,8 +134,10 @@ export default function EscuelitaPage() {
 
             </div>
           </div>
+          </ScrollReveal>
 
           {/* ── INSCRIPCIÓN (minimal, dark) ── */}
+          <ScrollReveal delay={0.3}>
           <div className="mb-16">
             <div className="bg-card p-5 rounded-xl border border-white/10">
               <div className="flex items-center justify-between gap-4">
@@ -142,8 +154,10 @@ export default function EscuelitaPage() {
               </div>
             </div>
           </div>
+          </ScrollReveal>
 
           {/* ── CTA FINAL ── */}
+          <ScrollReveal delay={0.35}>
           <div className="text-center py-8 border-t border-white/10">
             <p className="text-lg font-medium">
               ¿Te interesa participar?
@@ -155,6 +169,7 @@ export default function EscuelitaPage() {
               Cancha Las Torres FC • Sábados 10:00 AM
             </p>
           </div>
+          </ScrollReveal>
 
         </div>
       </main>

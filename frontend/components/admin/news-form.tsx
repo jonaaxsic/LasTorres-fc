@@ -55,7 +55,7 @@ export function NewsForm({ initialData, isEditing = false }: NewsFormProps) {
     console.log("Resultado:", data, error);
 
     if (data) {
-      toast.success(isEditing ? "Noticia actualizada" : "Noticia creada");
+      toast.success(isEditing ? "✅ Noticia actualizada correctamente" : "✅ Noticia creada correctamente");
       router.push("/admin/noticias");
     } else {
       toast.error(error || "Error al guardar la noticia");

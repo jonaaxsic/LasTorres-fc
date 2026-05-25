@@ -6,6 +6,7 @@ import { Footer } from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { DirectivaCard } from "@/components/directiva-card";
+import { BackgroundEffects } from "@/components/background-effects";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
@@ -33,6 +34,7 @@ export default function DirectivaPage() {
 
   return (
     <>
+      <BackgroundEffects />
       <Navbar />
       <main className="min-h-screen py-24 px-4">
         <div className="max-w-6xl mx-auto">

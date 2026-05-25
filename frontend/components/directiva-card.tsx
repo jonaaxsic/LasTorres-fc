@@ -60,7 +60,7 @@ export const DirectivaCard = ({
           
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
           
-          <div className="absolute bottom-0 w-full p-4 text-white">
+          <div className={`absolute bottom-0 w-full p-4 text-white ${showButtons ? "pb-16" : ""}`}>
             <h2 className="text-base font-bold truncate">{nombre}</h2>
             <p className="text-sm text-zinc-300">{cargo}</p>
             

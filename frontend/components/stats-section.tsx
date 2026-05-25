@@ -7,10 +7,9 @@ import Link from "next/link";
 import { ScrollReveal } from "./scroll-reveal";
 
 const categories = [
-  { name: "Sub-6", age: "5-6 años" },
-  { name: "Sub-8", age: "7-8 años" },
-  { name: "Sub-10", age: "9-10 años" },
-  { name: "Sub-12", age: "11-12 años" },
+  { name: "Sub-8", age: "7-9 años" },
+  { name: "Sub-10", age: "10-12 años" },
+  { name: "Sub-13", age: "13-14 años" },
 ];
 
 export function StatsSection() {
@@ -31,7 +30,7 @@ export function StatsSection() {
         </ScrollReveal>
 
         <ScrollReveal delay={0.2}>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
             {categories.map((category, index) => (
               <Card 
                 key={index} 

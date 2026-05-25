@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { BackgroundEffects } from "@/components/background-effects";
 import { Textarea } from "@/components/ui/textarea";
 import { Mail, Phone, MapPin, Send, Loader2 } from "lucide-react";
 import { Breadcrumb } from "@/components/breadcrumb";
@@ -28,6 +29,7 @@ export default function ContactoPage() {
 
   return (
     <>
+      <BackgroundEffects />
       <Navbar />
       <main className="min-h-screen py-24 px-4">
         <div className="max-w-4xl mx-auto">

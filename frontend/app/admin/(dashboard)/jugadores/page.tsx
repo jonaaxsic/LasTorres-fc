@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import Image from "next/image";
 
 export default function JugadoresAdminPage() {
   const router = useRouter();
+  const formRef = useRef<HTMLDivElement>(null);
   const [jugadores, setJugadores] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,6 +47,16 @@ export default function JugadoresAdminPage() {
   useEffect(() => {
     cargarDatos();
   }, []);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (formRef.current && !formRef.current.contains(e.target as Node)) {
+        setEditando(null);
+      }
+    }
+    if (editando) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [editando]);
 
   const cargarDatos = async () => {
     const [jugRes, catRes] = await Promise.all([
@@ -87,12 +98,12 @@ export default function JugadoresAdminPage() {
         toast.error(result.error);
       } else if (result.data) {
         console.log("Jugador guardado:", result.data);
-        toast.success(editando?.id ? "Jugador actualizado" : "Jugador creado exitosamente");
+        toast.success(editando?.id ? "✅ Jugador actualizado correctamente" : "✅ Jugador creado correctamente");
         setEditando(null);
         cargarDatos();
       } else {
         console.log("Sin data en resultado");
-        toast.success("Jugador guardado");
+        toast.success("✅ Jugador guardado correctamente");
         setEditando(null);
         cargarDatos();
       }
@@ -110,7 +121,7 @@ export default function JugadoresAdminPage() {
     if (result.error) {
       toast.error(result.error);
     } else {
-      toast.success("Jugador eliminado");
+      toast.success("✅ Jugador eliminado correctamente");
       cargarDatos();
     }
   };
@@ -130,7 +141,7 @@ export default function JugadoresAdminPage() {
           <h1 className="text-2xl font-bold">Jugadores</h1>
           <p className="text-muted-foreground">Gestiona los jugadores del club</p>
         </div>
-        <Button onClick={() => setEditando({} as Player)}>
+        <Button onClick={() => setEditando(editando ? null : {} as Player)}>
           <Plus className="w-4 h-4 mr-2" />
           Nuevo Jugador
         </Button>
@@ -169,6 +180,7 @@ export default function JugadoresAdminPage() {
       </div>
 
       {editando !== null && (
+        <div ref={formRef}>
         <Card>
           <CardHeader>
             <CardTitle>{editando?.id ? "Editar" : "Nuevo"} Jugador</CardTitle>
@@ -218,15 +230,11 @@ export default function JugadoresAdminPage() {
             </form>
           </CardContent>
         </Card>
+        </div>
       )}
 
       <div className="flex flex-wrap gap-3 justify-center sm:justify-start">
-        {mostrarVacio ? (
-          <div className="col-span-full text-center py-16 text-muted-foreground">
-            <Search className="w-12 h-12 mx-auto mb-4 opacity-50" />
-            <p>Escribe para buscar un jugador</p>
-          </div>
-        ) : (
+        {!mostrarVacio && (
           <>
             {jugadoresFiltrados.map((jugador) => (
               <PlayerCard 

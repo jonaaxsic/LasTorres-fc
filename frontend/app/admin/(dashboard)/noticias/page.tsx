@@ -64,7 +64,7 @@ export default function NoticiasPage() {
     if (error) {
       toast.error("Error al eliminar la noticia");
     } else {
-      toast.success("Noticia eliminada correctamente ✅");
+      toast.success("✅ Noticia eliminada correctamente");
       setNews(news.filter((n) => n.id !== deleteId));
     }
 

@@ -5,6 +5,8 @@ import { Footer } from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumb } from "@/components/breadcrumb";
 import Image from "next/image";
+import { BackgroundEffects } from "@/components/background-effects";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 export default function ClubPage() {
   const clubInfo = {
@@ -29,31 +31,37 @@ export default function ClubPage() {
 
   return (
     <>
+      <BackgroundEffects />
       <Navbar />
       <main className="min-h-screen py-24 px-4">
         <div className="max-w-6xl mx-auto">
           <Breadcrumb />
 
           {/* ── HEADER ── */}
-          <div className="mb-12">
-            <Badge className="mb-3 bg-white/10 border-0 text-white/70 text-xs font-bold uppercase tracking-widest">
-              Club Socio Cultural
-            </Badge>
-            <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight">
-              Las Torres FC
-            </h1>
-          </div>
+          <ScrollReveal delay={0.1}>
+            <div className="mb-12">
+              <Badge className="mb-3 bg-white/10 border-0 text-white/70 text-xs font-bold uppercase tracking-widest">
+                Club Socio Cultural
+              </Badge>
+              <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight">
+                Las Torres FC
+              </h1>
+            </div>
+          </ScrollReveal>
 
           {/* ── FECHA DE FUNDACIÓN (mejorada) ── */}
-          <div className="mb-16">
+          <ScrollReveal delay={0.15}>
+            <div className="mb-16">
             <div className="bg-gradient-to-r from-red-900/30 to-transparent p-6 md:p-8 rounded-xl border-l-4 border-red-600">
               <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Fundado el</p>
               <p className="text-xl md:text-2xl font-bold text-red-500">28 de marzo de 2025</p>
               <p className="text-sm text-muted-foreground mt-2">Club Socio Cultural Las Torres FC</p>
             </div>
           </div>
+          </ScrollReveal>
 
           {/* ── IMAGEN PRINCIPAL ── */}
+          <ScrollReveal delay={0.15}>
           <div className="mb-16">
             <div className="relative w-full aspect-video rounded-xl overflow-hidden">
               <Image
@@ -70,8 +78,10 @@ export default function ClubPage() {
               </div>
             </div>
           </div>
+          </ScrollReveal>
 
           {/* ── HISTORIA ── */}
+          <ScrollReveal delay={0.2}>
           <div className="mb-16">
             <div className="max-w-3xl">
               <h2 className="font-heading text-2xl md:text-3xl font-bold uppercase mb-4">
@@ -83,8 +93,10 @@ export default function ClubPage() {
               </p>
             </div>
           </div>
+          </ScrollReveal>
 
           {/* ── MISIÓN Y VISIÓN ── */}
+          <ScrollReveal delay={0.25}>
           <div className="mb-16">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-card border border-white/10 p-6 rounded-xl">
@@ -112,8 +124,10 @@ export default function ClubPage() {
               </div>
             </div>
           </div>
+          </ScrollReveal>
 
           {/* ── GALERÍA (fotos diferentes) ── */}
+          <ScrollReveal delay={0.3}>
           <div className="mb-16">
             <h2 className="font-heading text-xl md:text-2xl font-bold uppercase mb-6">
               Nuestra Galeria
@@ -132,8 +146,10 @@ export default function ClubPage() {
               ))}
             </div>
           </div>
+          </ScrollReveal>
 
           {/* ── DIRECCIÓN Y MAPA ── */}
+          <ScrollReveal delay={0.35}>
           <div className="mb-16">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="bg-card/50 border border-white/10 p-6 rounded-xl">
@@ -170,8 +186,10 @@ export default function ClubPage() {
               </div>
             </div>
           </div>
+          </ScrollReveal>
 
           {/* ── CONTACTO ── */}
+          <ScrollReveal delay={0.4}>
           <div className="text-center py-8 border-t border-white/10">
             <p className="text-lg font-medium mb-2">¿Quieres visitarnos o participar?</p>
             <p className="text-sm text-muted-foreground">
@@ -181,6 +199,7 @@ export default function ClubPage() {
               Los sábados de 10:00 a 12:00 hrs
             </p>
           </div>
+          </ScrollReveal>
 
         </div>
       </main>

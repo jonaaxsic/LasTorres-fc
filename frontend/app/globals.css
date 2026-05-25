@@ -132,8 +132,40 @@
   }
   body {
     @apply bg-background text-foreground;
+    overflow-x: hidden;
   }
 }
+
+/* ── Líneas interactivas (siguen al cursor) ── */
+.background-effects {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background:
+    repeating-linear-gradient(
+      65deg,
+      transparent,
+      transparent 120px,
+      rgba(198,40,40,0.08) 120px,
+      rgba(198,40,40,0.08) 121px
+    ),
+    repeating-linear-gradient(
+      -25deg,
+      transparent,
+      transparent 180px,
+      rgba(220,38,38,0.06) 180px,
+      rgba(220,38,38,0.06) 181px
+    );
+}
+.background-effects.active {
+  opacity: 1;
+}
+
+
 
 /* Scroll snap for horizontal cards */
 .scroll-snap-x {

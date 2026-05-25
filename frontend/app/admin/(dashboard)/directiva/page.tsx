@@ -30,8 +30,6 @@ export default function DirectivaAdminPage() {
     cargarDatos();
   }, []);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-
   const cargarDatos = async () => {
     try {
       const { data, error } = await teamApi.getAll();
@@ -86,55 +84,19 @@ export default function DirectivaAdminPage() {
       nombre: nombreInput.value.trim(),
       cargo: cargoInput.value.trim(),
       descripcion: (form.elements.namedItem("descripcion") as HTMLTextAreaElement)?.value || "",
-      foto_url: editando?.foto_url || "",
+      foto_url: (form.elements.namedItem("foto_url") as HTMLInputElement)?.value || "",
     };
 
-    const token = localStorage.getItem("auth_token");
-    
-    if (!token) {
-      toast.error("Tu sesión expiró. Iniciá sesión nuevamente.");
-      setIsSubmitting(false);
-      window.location.href = "/admin/login";
-      return;
-    }
-    
-    try {
-      const url = editando?.id 
-        ? `${API_URL}/api/directiva/${editando.id}/` 
-        : `${API_URL}/api/directiva/`;
-      const method = editando?.id ? "PATCH" : "POST";
+    const { error } = editando?.id
+      ? await teamApi.update(editando.id, data)
+      : await teamApi.create(data);
 
-      const res = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        if (res.status === 401 || result.detail?.includes("Token") || result.detail?.includes("auth")) {
-          toast.error("Tu sesión expiró. Iniciá sesión nuevamente.");
-          localStorage.removeItem("auth_token");
-          setTimeout(() => window.location.href = "/admin/login", 2000);
-        } else {
-          toast.error(result.detail || result.error || `Error ${res.status}`);
-        }
-      } else {
-        toast.success(editando?.id ? "✅ Directivo actualizado" : "✅ Directivo creado");
-        setEditando(null);
-        cargarDatos();
-      }
-    } catch (error: any) {
-      console.error("Error:", error);
-      if (error.name === "TypeError") {
-        toast.error("Error de conexión. Verificá que el servidor esté corriendo.");
-      } else {
-        toast.error("Ocurrió un error inesperado.");
-      }
+    if (error) {
+      toast.error(error);
+    } else {
+      toast.success(editando?.id ? "✅ Directivo actualizado correctamente" : "✅ Directivo creado correctamente");
+      setEditando(null);
+      cargarDatos();
     }
 
     setIsSubmitting(false);
@@ -144,32 +106,13 @@ export default function DirectivaAdminPage() {
     const confirmar = confirm(`¿Eliminar a "${nombre || "este directivo"}"?\n\nEsta acción no se puede deshacer.`);
     if (!confirmar) return;
     
-    const token = localStorage.getItem("auth_token");
-    if (!token) {
-      toast.error("Tu sesión expiró.");
-      return;
-    }
-    
     toast.info("Eliminando...");
-    try {
-      const res = await fetch(`${API_URL}/api/directiva/${id}/`, {
-        method: "DELETE",
-        headers: { 
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      const result = await res.json();
-      
-      if (!res.ok) {
-        toast.error(result.detail || result.error || `Error ${res.status}`);
-      } else {
-        toast.success("✅ Directivo eliminado");
-        cargarDatos();
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      toast.error("Error de conexión.");
+    const { error } = await teamApi.delete(id);
+    if (error) {
+      toast.error(error);
+    } else {
+      toast.success("✅ Directivo eliminado correctamente");
+      cargarDatos();
     }
   };
 

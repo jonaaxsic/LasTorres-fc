@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { PlayerCard } from "@/components/player-card";
 import { Spinner } from "@/components/ui/spinner";
 import { Breadcrumb } from "@/components/breadcrumb";
+import { BackgroundEffects } from "@/components/background-effects";
 
 interface Player {
   id: number;
@@ -61,6 +62,7 @@ export default function JugadoresPage() {
 
   return (
     <>
+      <BackgroundEffects />
       <Navbar />
       <main className="min-h-screen py-24 px-4" ref={containerRef}>
         <div className="max-w-6xl mx-auto">

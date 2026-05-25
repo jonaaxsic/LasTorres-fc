@@ -410,6 +410,18 @@ export interface TeamMember {
 
 export const teamApi = {
   getAll: () => fetchApi<TeamMember[]>("/api/directiva"),
+  create: (data: { nombre: string; cargo: string; descripcion?: string; foto_url?: string }) =>
+    fetchApi<TeamMember>("/api/directiva/", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  update: (id: number, data: { nombre: string; cargo: string; descripcion?: string; foto_url?: string }) =>
+    fetchApi<TeamMember>(`/api/directiva/${id}/`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    }),
+  delete: (id: number) =>
+    fetchApi<void>(`/api/directiva/${id}/`, { method: "DELETE" }),
 };
 
 // =====================

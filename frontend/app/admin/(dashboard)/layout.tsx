@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { AuthProvider, useAuth } from "@/lib/auth-context";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { Spinner } from "@/components/ui/spinner";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "sonner";
 
 function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -30,12 +30,21 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <AdminSidebar />
       <main className="lg:pl-64 pt-16 lg:pt-0 min-h-screen">
         <div className="p-4 md:p-6 lg:p-8">{children}</div>
       </main>
-      <Toaster />
+      <Toaster 
+        theme="dark"
+        toastOptions={{
+          style: {
+            background: "#1a1a1a",
+            border: "1px solid rgba(255,255,255,0.1)",
+            color: "#fff",
+          },
+        }}
+      />
     </div>
   );
 }

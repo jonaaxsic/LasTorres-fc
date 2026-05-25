@@ -83,7 +83,7 @@ export default function GaleriaPage() {
     });
 
     if (data) {
-      toast.success("Imagen agregada a la galería");
+      toast.success("✅ Imagen agregada correctamente");
       setImages([data, ...images]);
       setIsUploadOpen(false);
       setUploadData({ url: "", title: "", description: "" });
@@ -103,7 +103,7 @@ export default function GaleriaPage() {
     if (error) {
       toast.error("Error al eliminar la imagen");
     } else {
-      toast.success("Imagen eliminada correctamente");
+      toast.success("✅ Imagen eliminada correctamente");
       setImages(images.filter((i) => i.id !== deleteId));
     }
 
