@@ -84,22 +84,20 @@ export const DirectivaCard = ({
 
         {/* ═══ BACK - Descripción ═══ */}
         <div
-          className="absolute inset-0 w-full h-full bg-zinc-900 flex flex-col p-4"
+          className="absolute inset-0 w-full h-full bg-zinc-900 flex flex-col items-center justify-center p-4"
           style={{
             backfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
           }}
         >
-          <h2 className="text-base font-bold text-white text-center shrink-0">{nombre}</h2>
-          <p className="text-sm text-zinc-400 text-center mb-3 shrink-0">{cargo}</p>
+          <h2 className="text-base font-bold text-white text-center">{nombre}</h2>
+          <p className="text-sm text-zinc-400 text-center mb-3">{cargo}</p>
           {descripcion && (
-            <div className="flex-1 overflow-y-auto min-h-0">
-              <p className="text-xs text-zinc-200 leading-relaxed text-center">
-                {descripcion}
-              </p>
-            </div>
+            <p className="text-xs text-zinc-200 leading-relaxed text-center">
+              {descripcion}
+            </p>
           )}
-          <div className="shrink-0 pt-3 flex items-center justify-center gap-1 text-xs text-zinc-400">
+          <div className="mt-auto pt-3 flex items-center gap-1 text-xs text-zinc-400">
             <RotateCcw className="w-3 h-3" />
             <span>Volver</span>
           </div>
