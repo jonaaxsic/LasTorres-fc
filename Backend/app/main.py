@@ -4,6 +4,7 @@ Actualizado: 2026-05-03
 """
 
 import logging
+import re
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -60,11 +61,12 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Configurar CORS - orígenes específicos desde configuración
+# Configurar CORS - orígenes específicos desde configuración + Vercel dinámico
 allowed_origins = _get_allowed_origins()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,  # orígenes específicos (no "*")
+    allow_origins=allowed_origins,  # orígenes específicos desde env vars
+    allow_origin_regex=r"https://.*\.vercel\.app",  # cualquier deploy de Vercel
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization", "Accept", "Cookie"],
