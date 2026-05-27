@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { matchesApi, Match } from "@/lib/api";
+import { matchesApi, Match, parseCategorias } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -144,7 +144,11 @@ export function MatchesSection() {
                       <span className="text-xs font-medium">Las Torres</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Badge className="bg-[#dc2626] text-white text-[10px] px-1">{match.categoria}</Badge>
+                      <div className="flex flex-wrap gap-1 items-center">
+                        {parseCategorias(match.categoria).map((cat) => (
+                          <Badge key={cat} className="bg-[#dc2626] text-white text-[10px] px-1">{cat}</Badge>
+                        ))}
+                      </div>
                       <span className="text-xs font-bold">VS</span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -214,7 +218,11 @@ export function MatchesSection() {
                       <span className="text-xs font-medium">Las Torres</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Badge className="bg-[#dc2626] text-white text-[10px] px-1">{match.categoria}</Badge>
+                      <div className="flex flex-wrap gap-1 items-center">
+                        {parseCategorias(match.categoria).map((cat) => (
+                          <Badge key={cat} className="bg-[#dc2626] text-white text-[10px] px-1">{cat}</Badge>
+                        ))}
+                      </div>
                       <span className="text-xs font-bold">VS</span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -249,7 +257,11 @@ export function MatchesSection() {
                       <span className="text-xs font-medium">Las Torres</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Badge className="bg-[#dc2626] text-white text-[10px] px-1">{match.categoria}</Badge>
+                      <div className="flex flex-wrap gap-1 items-center">
+                        {parseCategorias(match.categoria).map((cat) => (
+                          <Badge key={cat} className="bg-[#dc2626] text-white text-[10px] px-1">{cat}</Badge>
+                        ))}
+                      </div>
                       <span className="text-xs font-bold bg-primary text-primary-foreground px-1.5 py-0.5 rounded">
                         {match.marca_local} - {match.marca_visitante}
                       </span>

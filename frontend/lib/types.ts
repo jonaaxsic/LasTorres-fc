@@ -22,11 +22,7 @@ export const MATCH_STATUS_LABELS: Record<string, string> = {
 };
 
 export const CATEGORIES = [
-  "Sub-6",
   "Sub-8",
   "Sub-10",
-  "Sub-12",
-  "Sub-14",
-  "Sub-16",
-  "Primera",
+  "Sub-13",
 ];

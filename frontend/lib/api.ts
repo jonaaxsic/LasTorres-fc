@@ -278,8 +278,20 @@ export interface MatchCreate {
   home_score?: number;
   away_score?: number;
   is_home: boolean;
-  category?: string;
+  categories: string[];
   status?: string;
+}
+
+/** Convierte el JSON de categorías de la API a un array limpio */
+export function parseCategorias(raw?: string): string[] {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [raw];
+  } catch {
+    // Si no es JSON válido, tratar como texto plano
+    return raw ? [raw] : [];
+  }
 }
 
 export const matchesApi = {
@@ -299,14 +311,17 @@ export const matchesApi = {
         marca_local: data.home_score,
         marca_visitante: data.away_score,
         es_local: data.is_home,
-        categoria: data.category,
+        categoria: JSON.stringify(data.categories),
         estado: data.status || "programado",
       }),
     }),
   update: (id: number, data: Partial<MatchCreate>) =>
     fetchApi<Match>(`/api/matches/${id}`, {
       method: "PATCH",
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        ...data,
+        categoria: data.categories ? JSON.stringify(data.categories) : undefined,
+      }),
     }),
   delete: (id: number) =>
     fetchApi<void>(`/api/matches/${id}`, {

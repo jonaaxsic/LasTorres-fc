@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { matchesApi, Match } from "@/lib/api";
+import { matchesApi, Match, parseCategorias } from "@/lib/api";
 import { MATCH_STATUS_LABELS, CATEGORIES } from "@/lib/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -139,10 +139,14 @@ export default function PartidosPage() {
                   {/* Match Info */}
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <Badge className={statusColors[match.status]}>
-                        {MATCH_STATUS_LABELS[match.status]}
+                      <Badge className={statusColors[match.estado]}>
+                        {MATCH_STATUS_LABELS[match.estado]}
                       </Badge>
-                      <Badge variant="outline">{match.category}</Badge>
+                      <div className="flex flex-wrap gap-1">
+                        {parseCategorias(match.categoria).map((cat) => (
+                          <Badge key={cat} variant="outline">{cat}</Badge>
+                        ))}
+                      </div>
                     </div>
 
                     {/* Teams */}
@@ -154,14 +158,14 @@ export default function PartidosPage() {
                         <span className="font-semibold">Las Torres</span>
                       </div>
 
-                      {match.status === "finished" ? (
+                      {["finalizado", "finished"].includes(match.estado) ? (
                         <div className="flex items-center gap-2 px-3 py-1 rounded bg-muted">
                           <span className="font-bold text-lg">
-                            {match.is_home ? match.home_score : match.away_score}
+                            {match.es_local ? match.marca_local : match.marca_visitante}
                           </span>
                           <span className="text-muted-foreground">-</span>
                           <span className="font-bold text-lg">
-                            {match.is_home ? match.away_score : match.home_score}
+                            {match.es_local ? match.marca_visitante : match.marca_local}
                           </span>
                         </div>
                       ) : (
@@ -169,16 +173,16 @@ export default function PartidosPage() {
                       )}
 
                       <div className="flex items-center gap-2">
-                        {match.opponent_logo ? (
+                        {match.logo_rival ? (
                           <img
-                            src={match.opponent_logo}
-                            alt={match.opponent}
+                            src={match.logo_rival}
+                            alt={match.rival}
                             className="w-8 h-8 rounded-full object-cover"
                           />
                         ) : (
                           <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
                             <span className="text-xs font-bold">
-                              {match.opponent.substring(0, 2).toUpperCase()}
+                              {match.rival.substring(0, 2).toUpperCase()}
                             </span>
                           </div>
                         )}
