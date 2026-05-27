@@ -146,11 +146,9 @@ export default function PartidosPage() {
                       <Badge className={statusColors[match.estado]}>
                         {MATCH_STATUS_LABELS[match.estado]}
                       </Badge>
-                      <div className="flex flex-wrap gap-1">
-                        {parseCategorias(match.categoria).map((cat) => (
-                          <Badge key={cat} variant="outline">{cat}</Badge>
-                        ))}
-                      </div>
+                      <Badge variant="outline">
+                        {parseCategorias(match.categoria).join(" / ") || match.categoria}
+                      </Badge>
                     </div>
 
                     {/* Teams */}
