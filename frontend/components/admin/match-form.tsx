@@ -1,5 +1,8 @@
 "use client";
 
+// Formulario de creación/edición de partidos
+// Categorías: checkboxes seleccionables (Sub-8, Sub-10, Sub-13)
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { matchesApi, Match, MatchCreate, parseCategorias } from "@/lib/api";
