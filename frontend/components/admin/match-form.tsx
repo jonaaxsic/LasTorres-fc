@@ -23,22 +23,19 @@ export function MatchForm({ initialData, isEditing = false }: MatchFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Inicializar categorías desde el JSON de la API o con Sub-10 por defecto
-  const initialCategories = initialData?.categoria
-    ? parseCategorias(initialData.categoria)
-    : ["Sub-10"];
-
   const [formData, setFormData] = useState<MatchCreate>({
-    opponent: initialData?.rival || "",
-    opponent_logo: initialData?.logo_rival || "",
-    date: initialData?.fecha || "",
-    time: initialData?.hora || "",
-    location: initialData?.lugar || "",
-    home_score: initialData?.marca_local,
-    away_score: initialData?.marca_visitante,
-    is_home: initialData?.es_local ?? true,
-    categories: initialCategories,
-    status: initialData?.estado || "programado",
+    opponent: initialData?.opponent || "",
+    opponent_logo: initialData?.opponent_logo || "",
+    date: initialData?.date || "",
+    time: initialData?.time || "",
+    location: initialData?.location || "",
+    home_score: initialData?.home_score,
+    away_score: initialData?.away_score,
+    is_home: initialData?.is_home ?? true,
+    categories: initialData?.categoria
+      ? parseCategorias(initialData.categoria)
+      : ["Sub-10"],
+    status: initialData?.status || "scheduled",
   });
 
   const toggleCategory = (cat: string) => {
@@ -231,7 +228,7 @@ export function MatchForm({ initialData, isEditing = false }: MatchFormProps) {
                 </Field>
 
                 {/* Score (only visible when finished) */}
-                {["finished", "finalizado"].includes(formData.status) && (
+                {formData.status === "finished" && (
                   <div className="grid sm:grid-cols-2 gap-4">
                     <Field>
                       <FieldLabel htmlFor="home_score">
