@@ -22,7 +22,7 @@ services:
       - key: REFRESH_TOKEN_EXPIRE_DAYS
         value: 7
       - key: ALLOWED_ORIGINS
-        value: "https://lastorresfc.pages.dev,https://lastorresfc.onrender.com"
+        value: "https://lastorresfc.pages.dev,https://lastorresfc.onrender.com,https://lastorres-fc.vercel.app"
       - key: DEBUG
         value: "false"
       - key: HOST
