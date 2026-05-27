@@ -20,12 +20,17 @@ router = APIRouter(prefix="/api/auth", tags=["Auth"])
 
 
 def _get_session_config() -> dict:
-    """Obtiene configuración de cookies según el entorno."""
+    """Obtiene configuración de cookies según el entorno.
+    - Producción (Render): Secure=True + SameSite=None (cross-origin Vercel→Render)
+    - Desarrollo (localhost): Secure=False + SameSite=Lax
+    """
+    settings = get_settings()
+    is_production = not settings.debug
     return {
         "httponly": True,
-        "samesite": "lax",
-        "secure": False,  # Siempre False en desarrollo
-        "domain": "localhost",
+        "samesite": "none" if is_production else "lax",
+        "secure": is_production,
+        # Sin 'domain' — el browser usa el dominio actual automáticamente
     }
 
 
