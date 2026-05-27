@@ -22,7 +22,7 @@ export function Footer() {
               <span className="font-heading font-bold text-2xl">LAS TORRES FC</span>
             </div>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto lg:mx-0 text-center lg:text-left">
-              Más que un club, una familia. Formando deportistas y personas desde 1985.
+              Más que un club, una familia. Formando deportistas y personas desde 2025.
             </p>
             <div className="flex items-center justify-center lg:justify-start gap-3">
               <a href="https://web.facebook.com/profile.php?id=61575806463393" target="_blank" rel="noopener noreferrer">
@@ -60,11 +60,18 @@ export function Footer() {
             <ul className="space-y-3 text-muted-foreground">
               <li className="flex items-center justify-center md:justify-start gap-2">
                 <MapPin className="w-5 h-5 text-primary flex-shrink-0" />
-                <span>Av. Las Torres 1234, Ciudad</span>
+                <div className="text-left">
+                  <span>Las Torres 2318</span>
+                  <br />
+                  <span className="text-sm">Cerro Navia, Santiago</span>
+                </div>
               </li>
               <li className="flex items-center justify-center md:justify-start gap-2">
                 <Phone className="w-5 h-5 text-primary flex-shrink-0" />
-                <span>+54 11 1234-5678</span>
+                <div className="text-left">
+                  <a href="tel:+56974613927" className="hover:text-primary block">+56 9 7461 3927</a>
+                  <a href="tel:+56927450414" className="hover:text-primary block text-sm">+56 9 2745 0414</a>
+                </div>
               </li>
               <li className="flex items-center justify-center md:justify-start gap-2">
                 <Mail className="w-5 h-5 text-primary flex-shrink-0" />
