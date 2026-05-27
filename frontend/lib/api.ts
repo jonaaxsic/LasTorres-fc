@@ -282,6 +282,20 @@ export interface MatchCreate {
   status?: string;
 }
 
+/** Para edición parcial — solo se mandan los campos que cambian, con nombres en español */
+export interface MatchUpdate {
+  estado?: string;
+  marca_local?: number;
+  marca_visitante?: number;
+  rival?: string;
+  fecha?: string;
+  hora?: string;
+  lugar?: string;
+  logo_rival?: string;
+  es_local?: boolean;
+  categories?: string[];
+}
+
 /** Convierte el JSON de categorías de la API a un array limpio */
 export function parseCategorias(raw?: string): string[] {
   if (!raw) return [];
@@ -315,12 +329,20 @@ export const matchesApi = {
         estado: data.status || "programado",
       }),
     }),
-  update: (id: number, data: Partial<MatchCreate>) =>
+  update: (id: number, data: MatchUpdate) =>
     fetchApi<Match>(`/api/matches/${id}`, {
       method: "PATCH",
       body: JSON.stringify({
-        ...data,
-        categoria: data.categories ? JSON.stringify(data.categories) : undefined,
+        estado: data.estado,
+        marca_local: data.marca_local,
+        marca_visitante: data.marca_visitante,
+        ...(data.rival ? { rival: data.rival } : {}),
+        ...(data.fecha ? { fecha: data.fecha } : {}),
+        ...(data.hora ? { hora: data.hora } : {}),
+        ...(data.lugar ? { lugar: data.lugar } : {}),
+        ...(data.logo_rival ? { logo_rival: data.logo_rival } : {}),
+        ...(data.es_local !== undefined ? { es_local: data.es_local } : {}),
+        ...(data.categories ? { categoria: JSON.stringify(data.categories) } : {}),
       }),
     }),
   delete: (id: number) =>

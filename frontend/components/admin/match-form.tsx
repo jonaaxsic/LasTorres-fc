@@ -27,9 +27,10 @@ import { toast } from "sonner";
 interface MatchFormProps {
   initialData?: Match;
   isEditing?: boolean;
+  onSuccess?: () => void;
 }
 
-export function MatchForm({ initialData, isEditing = false }: MatchFormProps) {
+export function MatchForm({ initialData, isEditing = false, onSuccess }: MatchFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -88,12 +89,41 @@ export function MatchForm({ initialData, isEditing = false }: MatchFormProps) {
     setIsSubmitting(true);
 
     const { data, error } = isEditing && initialData
-      ? await matchesApi.update(initialData.id, formData)
+      ? await matchesApi.update(initialData.id, {
+          estado: formData.status,
+          rival: formData.opponent,
+          fecha: formData.date,
+          hora: formData.time,
+          lugar: formData.location,
+          logo_rival: formData.opponent_logo,
+          es_local: formData.is_home,
+          marca_local: formData.home_score,
+          marca_visitante: formData.away_score,
+          categories: formData.categories,
+        })
       : await matchesApi.create(formData);
 
     if (data) {
       toast.success(isEditing ? "✅ Partido actualizado correctamente" : "✅ Partido creado correctamente");
-      router.push("/admin/partidos");
+
+      if (onSuccess) {
+        // Modo inline: resetear formulario y refrescar lista
+        setFormData({
+          opponent: "",
+          opponent_logo: "",
+          date: "",
+          time: "",
+          location: "",
+          home_score: undefined,
+          away_score: undefined,
+          is_home: true,
+          categories: ["Sub-10"],
+          status: "scheduled",
+        });
+        onSuccess();
+      } else {
+        router.push("/admin/partidos");
+      }
     } else {
       toast.error(error || "Error al guardar el partido");
     }
@@ -375,14 +405,16 @@ export function MatchForm({ initialData, isEditing = false }: MatchFormProps) {
                 "Crear Partido"
               )}
             </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => router.push("/admin/partidos")}
-              disabled={isSubmitting}
-            >
-              Cancelar
-            </Button>
+            {!onSuccess && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.push("/admin/partidos")}
+                disabled={isSubmitting}
+              >
+                Cancelar
+              </Button>
+            )}
           </div>
         </div>
       </div>

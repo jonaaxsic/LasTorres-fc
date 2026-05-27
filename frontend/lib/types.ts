@@ -1,6 +1,6 @@
 export type EventType = "evento" | "entrenamiento" | "bingo" | "reunion" | "otro" | string;
 
-export type MatchStatus = "scheduled" | "live" | "finished" | "postponed" | "programado" | "en_vivo" | "finalizado" | "postergado" | string;
+export type MatchStatus = "scheduled" | "live" | "finished" | "postponed" | "programado" | "en_vivo" | "finalizado" | "postergado" | "suspendido" | string;
 
 export const EVENT_TYPE_LABELS: Record<string, string> = {
   evento: "Evento",
@@ -19,6 +19,7 @@ export const MATCH_STATUS_LABELS: Record<string, string> = {
   en_vivo: "En Vivo",
   finalizado: "Finalizado",
   postergado: "Postergado",
+  suspendido: "Suspendido",
 };
 
 export const CATEGORIES = [
