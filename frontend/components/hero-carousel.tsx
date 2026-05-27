@@ -61,7 +61,7 @@ export function HeroCarousel() {
         ))}
 
       {/* Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-black/10 to-transparent" />
 
       {/* Contenido - posicion media en mobile, abajo en desktop */}
       <div className="absolute z-10 bottom-12 md:bottom-12 left-4 md:left-12 lg:left-20 right-4 md:right-auto max-w-xl">
