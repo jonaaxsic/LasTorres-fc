@@ -61,7 +61,7 @@ export default function JugadoresAdminPage() {
   const cargarDatos = async () => {
     const [jugRes, catRes] = await Promise.all([
       playersApi.getAll(),
-      fetch("http://localhost:3001/api/jugadores/categorias/list").then(r => r.json()).catch(() => [])
+      fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/jugadores/categorias/list`).then(r => r.json()).catch(() => [])
     ]);
     setJugadores(jugRes.data || []);
     setCategorias(catRes);
