@@ -58,8 +58,8 @@ export default function ContactoPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <a href="mailto:contacto@lastorresfc.cl" className="text-primary hover:underline">
-                    contacto@lastorresfc.cl
+                  <a href="mailto:club.lastorres.fc@gmail.com" className="text-primary hover:underline">
+                    club.lastorres.fc@gmail.com
                   </a>
                 </CardContent>
               </Card>
@@ -72,9 +72,14 @@ export default function ContactoPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <a href="tel:+56912345678" className="text-primary hover:underline">
-                    +56 9 1234 5678
-                  </a>
+                  <div className="space-y-1">
+                    <a href="tel:+56974613927" className="text-primary hover:underline block">
+                      +56 9 7461 3927
+                    </a>
+                    <a href="tel:+56927450414" className="text-primary hover:underline block">
+                      +56 9 2745 0414
+                    </a>
+                  </div>
                 </CardContent>
               </Card>
 
@@ -86,7 +91,8 @@ export default function ContactoPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p>Las Torres, Chile</p>
+                  <p>Las Torres 2318, Cerro Navia</p>
+                  <p className="text-sm text-muted-foreground mt-1">Comuna de Cerro Navia, Santiago</p>
                 </CardContent>
               </Card>
             </div>

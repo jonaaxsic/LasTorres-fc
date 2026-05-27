@@ -12,11 +12,15 @@ export default function ClubPage() {
   const clubInfo = {
     nombre: "Club Socio Cultural Las Torres FC",
     fundacion: "28 de marzo de 2025",
-    direccion: "Las Torres 2318, Cerro Navía",
+    direccion: "Las Torres 2318, Cerro Navia",
     region: "Santiago de Chile",
-    historia: "Club Socio Cultural Las Torres FC es un club de fútbol barrial fundado el 28 de marzo de 2025 en el sector de Cerro Navía, Santiago. Desde entonces, hemos sido un espacio de formación deportiva y valores para niños y jóvenes de la comunidad. El club se mantiene gracias al esfuerzo y compromiso de nuestros socios y simpatizantes, quienes año tras año apoyan para mantener viva la pasión por el fútbol en nuestro sector.",
-    vision: "Ser un espacio de formación integral donde los niños y jóvenes de Cerro Navía encuentren un lugar seguro para desarrollar sus habilidades deportivas, formándose como personas de bien a través del fútbol, contribuyendo a una comunidad más sana y unida.",
-    mission: "Promover el fútbol formativo en niños y jóvenes de Cerro Navía, brindando un espacio seguro donde puedan desarrollar habilidades deportivas, aprender valores de respeto, trabajo en equipo y disciplina, alejándolos de los peligros del uso excesivo de tecnología y las adicciones."
+    telefono1: "+56 9 7461 3927",
+    telefono2: "+56 9 2745 0414",
+    email: "club.lastorres.fc@gmail.com",
+    horario: "Sábados de 10:00 a 12:00 hrs",
+    historia: "Club Socio Cultural Las Torres FC es un club de fútbol social y cultural de barrio fundado el 28 de marzo de 2025 en la comuna de Cerro Navia, Santiago. Desde entonces, hemos sido un espacio de formación deportiva y valores para niños y jóvenes de la comunidad. El club se mantiene gracias al esfuerzo y compromiso de nuestros socios y simpatizantes, quienes día a día apoyan para mantener viva la pasión por el fútbol en nuestro sector.",
+    vision: "Ser un espacio de formación integral donde los niños y jóvenes de Cerro Navia encuentren un lugar seguro para desarrollar sus habilidades deportivas, formándose como personas de bien a través del fútbol, contribuyendo a una comunidad más sana y unida.",
+    mission: "Promover el fútbol formativo en niños y jóvenes de Cerro Navia, brindando un espacio seguro donde puedan desarrollar habilidades deportivas, aprender valores de respeto, trabajo en equipo y disciplina, alejándolos de los peligros del uso excesivo de tecnología y las adicciones."
   };
 
   // Imágenes del bucket
@@ -166,7 +170,25 @@ export default function ClubPage() {
                     <MapIcon className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
                     <div>
                       <p className="font-medium">Sector</p>
-                      <p className="text-muted-foreground">Cerro Navía, Santiago</p>
+                      <p className="text-muted-foreground">Cerro Navia, Santiago</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <PhoneIcon className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-medium">Teléfonos</p>
+                      <p className="text-muted-foreground">
+                        <a href={`tel:${clubInfo.telefono1.replace(/\s/g, "")}`} className="hover:text-primary transition-colors">{clubInfo.telefono1}</a>
+                        <span className="mx-2">|</span>
+                        <a href={`tel:${clubInfo.telefono2.replace(/\s/g, "")}`} className="hover:text-primary transition-colors">{clubInfo.telefono2}</a>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <MailIcon className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-medium">Correo</p>
+                      <a href={`mailto:${clubInfo.email}`} className="text-muted-foreground hover:text-primary transition-colors">{clubInfo.email}</a>
                     </div>
                   </div>
                 </div>
@@ -196,7 +218,7 @@ export default function ClubPage() {
               Te esperamos en {clubInfo.direccion}
             </p>
             <p className="text-sm text-white/60 mt-1">
-              Los sábados de 10:00 a 12:00 hrs
+              {clubInfo.horario}
             </p>
           </div>
           </ScrollReveal>
@@ -242,6 +264,23 @@ function MapIcon({ className }: { className?: string }) {
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <rect x="3" y="3" width="18" height="18" rx="2" />
       <path d="M3 9h18M9 3v18" />
+    </svg>
+  );
+}
+
+function PhoneIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+    </svg>
+  );
+}
+
+function MailIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+      <polyline points="22,6 12,13 2,6" />
     </svg>
   );
 }
