@@ -35,9 +35,14 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     """
     Eventos de lifecycle de la aplicación.
+    En serverless (Vercel), la DB se inicializa de forma lazy en la primera petición.
     """
-    # Inicio - inicializar base de datos
-    init_db()
+    # Inicio - inicializar base de datos (falla graceful en serverless)
+    try:
+        init_db()
+    except Exception as e:
+        # En serverless, la DB se inicializa lazy — no bloquear el arranque
+        logger.warning(f"DB init deferred (serverless): {e}")
     yield
     # Cierre - limpiar recursos
 

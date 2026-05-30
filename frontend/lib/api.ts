@@ -3,7 +3,7 @@
 // Updated: 2026-05-03 (Cookies + Auto-refresh)
 // ============================================
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 interface ApiResponse<T> {
   data?: T;
