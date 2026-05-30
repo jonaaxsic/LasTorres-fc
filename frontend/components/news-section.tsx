@@ -25,7 +25,7 @@ export function NewsSection() {
     const { data } = await newsApi.getAll();
     if (data && data.length > 0) {
       const sorted = data.sort(
-        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        (a, b) => new Date(b.created_at ?? "").getTime() - new Date(a.created_at ?? "").getTime()
       );
       setNews(sorted.slice(0, 10));
     }
@@ -170,7 +170,7 @@ export function NewsSection() {
                       </p>
                       <div className="flex items-center justify-between pt-2 border-t border-border/20">
                         <span className="text-xs text-muted-foreground">
-                          {formatDate(item.fecha_publicacion)}
+                          {item.fecha_publicacion ? formatDate(item.fecha_publicacion) : ""}
                         </span>
                         <span className="text-xs font-medium text-primary flex items-center gap-1">
                           Ver más <ArrowRight className="w-3 h-3" />

@@ -1,109 +1,102 @@
 // ============================================
 // API Layer - Las Torres FC
-// Updated: 2026-05-03 (Cookies + Auto-refresh)
+// Patterns: single responsibility, DRY, typed responses
 // ============================================
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
+const DEFAULT_FETCH_OPTIONS: RequestInit = {
+  credentials: "include",
+  headers: { "Content-Type": "application/json" },
+};
 
-interface ApiResponse<T> {
+// ─── Types ───────────────────────────────────────
+
+export interface ApiResponse<T> {
   data?: T;
   error?: string;
 }
 
-// Bandera para evitar múltiples refresh simultáneos
-let isRefreshing = false;
+interface RefreshState {
+  isRefreshing: boolean;
+  queue: Array<{ resolve: (value: boolean) => void }>;
+}
 
-// Intentar renovar el access_token usando el refresh_token
+// ─── Token refresh (singleton) ───────────────────
+
+const refreshState: RefreshState = { isRefreshing: false, queue: [] };
+
 async function tryRefreshToken(): Promise<boolean> {
-  if (isRefreshing) return false;
-  
+  if (refreshState.isRefreshing) {
+    return new Promise((resolve) => refreshState.queue.push({ resolve }));
+  }
+
+  refreshState.isRefreshing = true;
   try {
-    isRefreshing = true;
-    const response = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
+    const res = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
       method: "POST",
-      credentials: "include",  // Importante: envía las cookies
+      ...DEFAULT_FETCH_OPTIONS,
     });
-    
-    isRefreshing = false;
-    
-    if (response.ok) {
-      return true;
-    }
+    return res.ok;
+  } catch {
     return false;
-  } catch (error) {
-    isRefreshing = false;
-    return false;
+  } finally {
+    refreshState.isRefreshing = false;
+    refreshState.queue.forEach(({ resolve }) => resolve(false));
+    refreshState.queue = [];
   }
 }
 
-// Fetch con auto-refresh de tokens
+// ─── Core fetch wrapper ──────────────────────────
+
 async function fetchApi<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  retries = 1,
 ): Promise<ApiResponse<T>> {
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    ...options.headers,
-  };
+  const url = `${API_BASE_URL}${endpoint}`;
 
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const res = await fetch(url, {
+      ...DEFAULT_FETCH_OPTIONS,
       ...options,
-      headers,
-      credentials: "include",  // Importante: envía cookies automáticamente
+      headers: { ...DEFAULT_FETCH_OPTIONS.headers, ...options.headers },
     });
 
-    // Manejar 401: intentar refresh y reintentar
-    if (response.status === 401) {
-      // Si no es el endpoint de refresh/login本身, intentar renovar
-      if (!endpoint.includes("/refresh") && !endpoint.includes("/login")) {
-        const refreshed = await tryRefreshToken();
-        
-        if (refreshed) {
-          // Reintentar la petición original
-          return fetchApi<T>(endpoint, options);
-        }
-      }
-      
+    if (res.status === 401 && retries > 0 && !endpoint.includes("/login")) {
+      const refreshed = await tryRefreshToken();
+      if (refreshed) return fetchApi<T>(endpoint, options, 0);
       return { error: "Sesión expirada" };
     }
 
-    // Manejar otros códigos de error
-    if (response.status === 403) {
-      return { error: "No tienes permisos" };
+    if (res.status === 403) return { error: "No tienes permisos" };
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      return { error: body.detail ?? body.message ?? `Error ${res.status}` };
     }
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      return { error: errorData.detail || errorData.message || `Error ${response.status}` };
-    }
+    if (res.status === 204) return { data: undefined as T };
 
-    // Para respuestas sin contenido (ej: DELETE)
-    if (response.status === 204) {
-      return { data: undefined as T };
-    }
-
-    const data = await response.json();
+    const data = await res.json();
     return { data };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Error de conexión";
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Error de conexión";
     return { error: message };
   }
 }
 
-// =====================
-// Auth
-// =====================
+// ─── Auth ────────────────────────────────────────
+
 export interface LoginCredentials {
   username: string;
   password: string;
 }
 
 export interface AuthResponse {
-  usuario: User;
+  usuario: Usuario;
 }
 
-export interface User {
+export interface Usuario {
   id: number;
   nombre: string;
   correo: string;
@@ -113,48 +106,42 @@ export interface User {
 }
 
 export const authApi = {
-  login: (credentials: LoginCredentials) =>
+  login: (creds: LoginCredentials) =>
     fetchApi<AuthResponse>("/api/auth/login", {
       method: "POST",
-      credentials: "include",  // Importante
-      body: JSON.stringify({
-        email: credentials.username,
-        password: credentials.password,
-      }),
+      body: JSON.stringify({ email: creds.username, password: creds.password }),
     }),
 
   logout: async (): Promise<void> => {
     try {
       await fetch(`${API_BASE_URL}/api/auth/logout`, {
         method: "POST",
-        credentials: "include",
+        ...DEFAULT_FETCH_OPTIONS,
       });
-    } catch {
-      // Ignorar errores en logout
-    }
+    } catch { /* silent */ }
   },
 
-  me: () => fetchApi<User>("/api/auth/me"),
+  me: () => fetchApi<Usuario>("/api/auth/me"),
 };
 
-// =====================
-// News
-// =====================
-export interface News {
+// ─── Noticias ────────────────────────────────────
+
+export interface Noticia {
   id: number;
   titulo: string;
   contenido: string;
   imagen_url?: string;
-  imagen_url_2?: string;
+  /** @deprecated Usar imagen_url */
   imagenUrl?: string;
+  imagen_url_2?: string;
   featured?: boolean;
   fecha_publicacion?: string;
-  fechaPublicacion?: string;
+  /** @deprecated Usar fecha_publicacion */
   created_at?: string;
   autor?: string;
 }
 
-export interface NewsCreate {
+export interface NoticiaInput {
   titulo: string;
   contenido: string;
   imagen_url?: string;
@@ -163,127 +150,168 @@ export interface NewsCreate {
 }
 
 export const newsApi = {
-  getAll: () => fetchApi<News[]>("/api/noticias/"),
-  getById: (id: number) => fetchApi<News>(`/api/noticias/${id}/`),
-  create: (data: NewsCreate) =>
-    fetchApi<News>("/api/noticias/", {
-      method: "POST",
-      body: JSON.stringify({
-        titulo: data.titulo,
-        contenido: data.contenido,
-        imagen_url: data.imagen_url,
-        imagen_url_2: data.imagen_url_2,
-        featured: data.featured,
-      }),
-    }),
-  update: (id: number, data: Partial<NewsCreate>) =>
-    fetchApi<News>(`/api/noticias/${id}`, {
-      method: "PATCH",
-      body: JSON.stringify({
-        titulo: data.titulo,
-        contenido: data.contenido,
-        imagen_url: data.imagen_url,
-        imagen_url_2: data.imagen_url_2,
-        featured: data.featured,
-      }),
-    }),
+  getAll: () => fetchApi<Noticia[]>("/api/noticias/"),
+  getById: (id: number) => fetchApi<Noticia>(`/api/noticias/${id}/`),
+  create: (data: NoticiaInput) =>
+    fetchApi<Noticia>("/api/noticias/", { method: "POST", body: JSON.stringify(data) }),
+  update: (id: number, data: Partial<NoticiaInput>) =>
+    fetchApi<Noticia>(`/api/noticias/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
   delete: (id: number) =>
-    fetchApi<void>(`/api/noticias/${id}`, {
-      method: "DELETE",
-    }),
+    fetchApi<void>(`/api/noticias/${id}`, { method: "DELETE" }),
 };
 
-// =====================
-// Events
-// =====================
-export interface Event {
+// ─── Eventos ─────────────────────────────────────
+
+export interface Evento {
   id: number;
   titulo: string;
+  /** @deprecated Usar titulo */
+  title?: string;
   descripcion?: string;
+  /** @deprecated Usar descripcion */
+  description?: string;
   imagen_url?: string;
+  /** @deprecated Usar imagen_url */
+  image_url?: string;
   fecha: string;
+  /** @deprecated Usar fecha */
+  date?: string;
   hora?: string;
+  /** @deprecated Usar hora */
+  time?: string;
   lugar?: string;
+  /** @deprecated Usar lugar */
+  location?: string;
   tipo_evento?: string;
+  /** @deprecated Usar tipo_evento */
+  event_type?: string;
 }
 
-export interface EventCreate {
-  title: string;
+export interface EventoInput {
+  titulo: string;
+  /** @deprecated Usar titulo */
+  title?: string;
+  descripcion?: string;
+  /** @deprecated Usar descripcion */
   description?: string;
+  imagen_url?: string;
+  /** @deprecated Usar imagen_url */
   image_url?: string;
-  date: string;
+  fecha: string;
+  /** @deprecated Usar fecha */
+  date?: string;
+  hora?: string;
+  /** @deprecated Usar hora */
   time?: string;
+  lugar?: string;
+  /** @deprecated Usar lugar */
   location?: string;
+  tipo_evento?: string;
+  /** @deprecated Usar tipo_evento */
   event_type?: string;
 }
 
 export const eventsApi = {
-  getAll: () => fetchApi<Event[]>("/api/events"),
-  getById: (id: number) => fetchApi<Event>(`/api/events/${id}`),
-  create: (data: EventCreate) =>
-    fetchApi<Event>("/api/events/", {
+  getAll: () => fetchApi<Evento[]>("/api/events"),
+  getById: (id: number) => fetchApi<Evento>(`/api/events/${id}`),
+  create: (data: EventoInput) =>
+    fetchApi<Evento>("/api/events/", {
       method: "POST",
       body: JSON.stringify({
-        titulo: data.title,
-        descripcion: data.description,
-        imagen_url: data.image_url,
-        fecha: data.date,
-        hora: data.time,
-        lugar: data.location,
-        tipo_evento: data.event_type || "evento",
+        titulo: data.titulo || data.title,
+        descripcion: data.descripcion || data.description,
+        imagen_url: data.imagen_url || data.image_url,
+        fecha: data.fecha || data.date,
+        hora: data.hora || data.time,
+        lugar: data.lugar || data.location,
+        tipo_evento: data.tipo_evento || data.event_type || "evento",
       }),
     }),
-  update: (id: number, data: Partial<EventCreate>) =>
-    fetchApi<Event>(`/api/events/${id}`, {
+  update: (id: number, data: Partial<EventoInput>) =>
+    fetchApi<Evento>(`/api/events/${id}`, {
       method: "PATCH",
       body: JSON.stringify({
-        titulo: data.title,
-        descripcion: data.description,
-        imagen_url: data.image_url,
-        fecha: data.date,
-        hora: data.time,
-        lugar: data.location,
-        tipo_evento: data.event_type,
+        ...(data.titulo || data.title ? { titulo: data.titulo || data.title } : {}),
+        ...(data.descripcion || data.description ? { descripcion: data.descripcion || data.description } : {}),
+        ...(data.imagen_url || data.image_url ? { imagen_url: data.imagen_url || data.image_url } : {}),
+        ...(data.fecha || data.date ? { fecha: data.fecha || data.date } : {}),
+        ...(data.hora || data.time ? { hora: data.hora || data.time } : {}),
+        ...(data.lugar || data.location ? { lugar: data.lugar || data.location } : {}),
+        ...(data.tipo_evento || data.event_type ? { tipo_evento: data.tipo_evento || data.event_type } : {}),
       }),
     }),
   delete: (id: number) =>
-    fetchApi<void>(`/api/events/${id}`, {
-      method: "DELETE",
-    }),
+    fetchApi<void>(`/api/events/${id}`, { method: "DELETE" }),
 };
 
-// =====================
-// Matches
-// =====================
-export interface Match {
+// ─── Partidos ────────────────────────────────────
+
+export interface Partido {
   id: number;
   rival: string;
+  /** @deprecated Usar rival */
+  opponent?: string;
   logo_rival?: string;
+  /** @deprecated Usar logo_rival */
+  opponent_logo?: string;
   fecha: string;
+  /** @deprecated Usar fecha */
+  date?: string;
   hora?: string;
+  /** @deprecated Usar hora */
+  time?: string;
   lugar: string;
+  /** @deprecated Usar lugar */
+  location?: string;
   marca_local?: number;
+  /** @deprecated Usar marca_local */
+  home_score?: number;
   marca_visitante?: number;
+  /** @deprecated Usar marca_visitante */
+  away_score?: number;
   es_local: boolean;
+  /** @deprecated Usar es_local */
+  is_home?: boolean;
   categoria?: string;
   estado?: string;
-}
-
-export interface MatchCreate {
-  opponent: string;
-  opponent_logo?: string;
-  date: string;
-  time?: string;
-  location: string;
-  home_score?: number;
-  away_score?: number;
-  is_home: boolean;
-  categories: string[];
+  /** @deprecated Usar estado */
   status?: string;
 }
 
-/** Para edición parcial — solo se mandan los campos que cambian, con nombres en español */
-export interface MatchUpdate {
+export interface PartidoInput {
+  rival: string;
+  /** @deprecated Usar rival */
+  opponent?: string;
+  logo_rival?: string;
+  /** @deprecated Usar logo_rival */
+  opponent_logo?: string;
+  fecha: string;
+  /** @deprecated Usar fecha */
+  date?: string;
+  hora?: string;
+  /** @deprecated Usar hora */
+  time?: string;
+  lugar: string;
+  /** @deprecated Usar lugar */
+  location?: string;
+  marca_local?: number;
+  /** @deprecated Usar marca_local */
+  home_score?: number;
+  marca_visitante?: number;
+  /** @deprecated Usar marca_visitante */
+  away_score?: number;
+  es_local: boolean;
+  /** @deprecated Usar es_local */
+  is_home?: boolean;
+  categorias: string[];
+  /** @deprecated Usar categorias */
+  categories?: string[];
+  estado?: string;
+  /** @deprecated Usar estado */
+  status?: string;
+}
+
+export interface PartidoUpdate {
   estado?: string;
   marca_local?: number;
   marca_visitante?: number;
@@ -293,82 +321,75 @@ export interface MatchUpdate {
   lugar?: string;
   logo_rival?: string;
   es_local?: boolean;
+  categorias?: string[];
+  /** @deprecated Usar categorias */
   categories?: string[];
 }
 
-/** Convierte el JSON de categorías de la API a un array limpio */
+/** Convierte JSON de categorías de la API a array */
 export function parseCategorias(raw?: string): string[] {
   if (!raw) return [];
   try {
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [raw];
   } catch {
-    // Si no es JSON válido, tratar como texto plano
     return raw ? [raw] : [];
   }
 }
 
 export const matchesApi = {
-  getAll: () => fetchApi<Match[]>("/api/matches"),
-  getUpcoming: () => fetchApi<Match[]>("/api/matches/upcoming"),
-  getResults: () => fetchApi<Match[]>("/api/matches/results"),
-  getById: (id: number) => fetchApi<Match>(`/api/matches/${id}`),
-  create: (data: MatchCreate) =>
-    fetchApi<Match>("/api/matches/", {
+  getAll: () => fetchApi<Partido[]>("/api/matches"),
+  getUpcoming: () => fetchApi<Partido[]>("/api/matches/upcoming"),
+  getResults: () => fetchApi<Partido[]>("/api/matches/results"),
+  getById: (id: number) => fetchApi<Partido>(`/api/matches/${id}`),
+  create: (data: PartidoInput) =>
+    fetchApi<Partido>("/api/matches/", {
       method: "POST",
       body: JSON.stringify({
-        rival: data.opponent,
-        logo_rival: data.opponent_logo,
-        fecha: data.date,
-        hora: data.time,
-        lugar: data.location,
-        marca_local: data.home_score,
-        marca_visitante: data.away_score,
-        es_local: data.is_home,
-        categoria: JSON.stringify(data.categories),
-        estado: data.status || "programado",
-      }),
-    }),
-  update: (id: number, data: MatchUpdate) =>
-    fetchApi<Match>(`/api/matches/${id}`, {
-      method: "PATCH",
-      body: JSON.stringify({
-        estado: data.estado,
+        rival: data.rival,
+        logo_rival: data.logo_rival,
+        fecha: data.fecha,
+        hora: data.hora,
+        lugar: data.lugar,
         marca_local: data.marca_local,
         marca_visitante: data.marca_visitante,
-        ...(data.rival ? { rival: data.rival } : {}),
-        ...(data.fecha ? { fecha: data.fecha } : {}),
-        ...(data.hora ? { hora: data.hora } : {}),
-        ...(data.lugar ? { lugar: data.lugar } : {}),
-        ...(data.logo_rival ? { logo_rival: data.logo_rival } : {}),
-        ...(data.es_local !== undefined ? { es_local: data.es_local } : {}),
-        ...(data.categories ? { categoria: JSON.stringify(data.categories) } : {}),
+        es_local: data.es_local,
+        categoria: JSON.stringify(data.categorias),
+        estado: data.estado ?? "programado",
+      }),
+    }),
+  update: (id: number, data: PartidoUpdate) =>
+    fetchApi<Partido>(`/api/matches/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        ...data,
+        ...(data.categorias ? { categoria: JSON.stringify(data.categorias) } : {}),
       }),
     }),
   delete: (id: number) =>
-    fetchApi<void>(`/api/matches/${id}`, {
-      method: "DELETE",
-    }),
+    fetchApi<void>(`/api/matches/${id}`, { method: "DELETE" }),
 };
 
-// =====================
-// Players
-// =====================
-export interface Player {
+// ─── Jugadores ───────────────────────────────────
+
+export interface Jugador {
   id: number;
-  nombre?: string;
+  nombre: string;
+  /** @deprecated Usar nombre */
   name?: string;
   fecha_nacimiento?: string;
+  /** @deprecated Usar fecha_nacimiento */
   birthdate?: string;
   categoria_id?: number;
   posicion_id?: number;
   foto_url?: string;
+  /** @deprecated Usar foto_url */
   photo_url?: string;
   categoria?: { id: number; nombre: string };
   posicion?: { id: number; nombre: string };
 }
 
-export interface PlayerCreate {
+export interface JugadorInput {
   nombre: string;
   fecha_nacimiento: string;
   categoria_id: number;
@@ -377,123 +398,91 @@ export interface PlayerCreate {
 }
 
 export const playersApi = {
-  getAll: () => fetchApi<Player[]>("/api/jugadores"),
-  getById: (id: number) => fetchApi<Player>(`/api/jugadores/${id}`),
-  create: (data: PlayerCreate) =>
-    fetchApi<Player>("/api/jugadores/", {
-      method: "POST",
-      body: JSON.stringify({
-        nombre: data.nombre,
-        fecha_nacimiento: data.fecha_nacimiento,
-        categoria_id: data.categoria_id,
-        posicion_id: data.posicion_id,
-        foto_url: data.foto_url,
-      }),
-    }),
-  update: (id: number, data: Partial<PlayerCreate>) =>
-    fetchApi<Player>(`/api/jugadores/${id}`, {
-      method: "PATCH",
-      body: JSON.stringify(data),
-    }),
+  getAll: () => fetchApi<Jugador[]>("/api/jugadores"),
+  getById: (id: number) => fetchApi<Jugador>(`/api/jugadores/${id}`),
+  create: (data: JugadorInput) =>
+    fetchApi<Jugador>("/api/jugadores/", { method: "POST", body: JSON.stringify(data) }),
+  update: (id: number, data: Partial<JugadorInput>) =>
+    fetchApi<Jugador>(`/api/jugadores/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
   delete: (id: number) =>
-    fetchApi<void>(`/api/jugadores/${id}`, {
-      method: "DELETE",
-    }),
+    fetchApi<void>(`/api/jugadores/${id}`, { method: "DELETE" }),
 };
 
-// =====================
-// Gallery
-// =====================
-export interface GalleryImage {
+// ─── Galería ─────────────────────────────────────
+
+export interface GaleriaImagen {
   id: number;
   url: string;
-  name?: string;
   titulo?: string;
+  /** @deprecated Usar titulo */
   title?: string;
+  /** @deprecated Usar titulo */
+  name?: string;
   descripcion?: string;
-  description?: string;
   created_at?: string;
 }
 
 export const galleryApi = {
-  getAll: () => fetchApi<GalleryImage[]>("/api/galeria"),
-  upload: (data: { url: string; title?: string; description?: string }): Promise<ApiResponse<GalleryImage>> =>
-    fetchApi<GalleryImage>("/api/galeria", {
+  getAll: () => fetchApi<GaleriaImagen[]>("/api/galeria"),
+  upload: (data: { url: string; titulo?: string; title?: string; descripcion?: string }) =>
+    fetchApi<GaleriaImagen>("/api/galeria", {
       method: "POST",
-      body: JSON.stringify({
-        url: data.url,
-        titulo: data.title,
-        descripcion: data.description,
-      }),
+      body: JSON.stringify({ ...data, titulo: data.titulo ?? data.title }),
     }),
   delete: (id: number) =>
     fetchApi<void>(`/api/galeria/${id}`, { method: "DELETE" }),
 };
 
-// =====================
-// Team (Directiva)
-// =====================
-export interface TeamMember {
+// ─── Directiva ───────────────────────────────────
+
+export interface Directivo {
   id: number;
-  nombre?: string;
-  name?: string;
-  cargo?: string;
-  role?: string;
+  nombre: string;
+  cargo: string;
   foto_url?: string;
-  photo_url?: string;
   descripcion?: string;
-  description?: string;
+}
+
+export interface DirectivoInput {
+  nombre: string;
+  cargo: string;
+  descripcion?: string;
+  foto_url?: string;
 }
 
 export const teamApi = {
-  getAll: () => fetchApi<TeamMember[]>("/api/directiva"),
-  create: (data: { nombre: string; cargo: string; descripcion?: string; foto_url?: string }) =>
-    fetchApi<TeamMember>("/api/directiva/", {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
-  update: (id: number, data: { nombre: string; cargo: string; descripcion?: string; foto_url?: string }) =>
-    fetchApi<TeamMember>(`/api/directiva/${id}/`, {
-      method: "PATCH",
-      body: JSON.stringify(data),
-    }),
+  getAll: () => fetchApi<Directivo[]>("/api/directiva"),
+  create: (data: DirectivoInput) =>
+    fetchApi<Directivo>("/api/directiva/", { method: "POST", body: JSON.stringify(data) }),
+  update: (id: number, data: DirectivoInput) =>
+    fetchApi<Directivo>(`/api/directiva/${id}/`, { method: "PATCH", body: JSON.stringify(data) }),
   delete: (id: number) =>
     fetchApi<void>(`/api/directiva/${id}/`, { method: "DELETE" }),
 };
 
-// =====================
-// School (Escuelita)
-// =====================
-export interface SchoolCategory {
+// ─── Escuelita ───────────────────────────────────
+
+export interface CategoriaEscuelita {
   id: number;
   categoria?: string;
-  category?: string;
   horario?: string;
-  schedule?: string;
   entrada?: string;
-  entry?: string;
   descripcion?: string;
-  description?: string;
 }
 
 export const schoolApi = {
-  getAll: () => fetchApi<SchoolCategory[]>("/api/escuelita"),
+  getAll: () => fetchApi<CategoriaEscuelita[]>("/api/escuelita"),
 };
 
-// =====================
-// Club
-// =====================
-export interface ClubInfo {
+// ─── Club ────────────────────────────────────────
+
+export interface InfoClub {
   id: number;
   nombre?: string;
-  name?: string;
   direccion?: string;
-  address?: string;
   telefono?: string;
-  phone?: string;
   email?: string;
   historia?: string;
-  history?: string;
   mision?: string;
   vision?: string;
   logo_url?: string;
@@ -503,47 +492,56 @@ export interface ClubInfo {
 }
 
 export const clubApi = {
-  getInfo: () => fetchApi<ClubInfo>("/api/club"),
+  getInfo: () => fetchApi<InfoClub>("/api/club"),
 };
 
-// =====================
-// Upload helper
-// =====================
-export const uploadFile = async (file: File, folder: string = "noticias"): Promise<ApiResponse<{ url: string }>> => {
+// ─── Upload ──────────────────────────────────────
+
+// ─── Backward-compatible aliases (@deprecated) ───
+/** @deprecated Usar Noticia */
+export type News = Noticia;
+/** @deprecated Usar NoticiaInput */
+export type NewsCreate = NoticiaInput;
+/** @deprecated Usar Partido */
+export type Match = Partido;
+/** @deprecated Usar PartidoInput */
+export type MatchCreate = PartidoInput;
+/** @deprecated Usar PartidoUpdate */
+// MatchUpdate ya no existe, usar PartidoUpdate
+/** @deprecated Usar Evento */
+export type Event = Evento;
+/** @deprecated Usar EventoInput */
+export type EventCreate = EventoInput;
+/** @deprecated Usar GaleriaImagen */
+export type GalleryImage = GaleriaImagen;
+/** @deprecated Usar Jugador */
+export type Player = Jugador;
+/** @deprecated Usar Directivo */
+export type TeamMember = Directivo;
+
+export const uploadFile = async (
+  file: File,
+  folder = "noticias",
+): Promise<ApiResponse<{ url: string }>> => {
   const formData = new FormData();
   formData.append("file", file);
   formData.append("folder", folder);
 
-  return new Promise((resolve) => {
-    fetch(`${API_BASE_URL}/api/upload?folder=${folder}`, {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/upload?folder=${folder}`, {
       method: "POST",
-      credentials: "include",  // Importante: usa cookies
+      credentials: "include",
       body: formData,
-    })
-      .then(async (r) => {
-        if (!r.ok) {
-          const e = await r.json().catch(() => ({}));
-          resolve({ error: e.detail || "Error" });
-          return;
-        }
-        const d = await r.json();
-        resolve({ data: d });
-      })
-      .catch((e) => resolve({ error: e.message }));
-  });
-};
+    });
 
-// =====================
-// Default export
-// =====================
-export default {
-  auth: authApi,
-  news: newsApi,
-  events: eventsApi,
-  matches: matchesApi,
-  players: playersApi,
-  gallery: galleryApi,
-  team: teamApi,
-  school: schoolApi,
-  club: clubApi,
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      return { error: body.detail ?? "Error al subir archivo" };
+    }
+
+    const data = await res.json();
+    return { data };
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : "Error de conexión" };
+  }
 };

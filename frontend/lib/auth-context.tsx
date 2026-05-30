@@ -1,81 +1,85 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { authApi, User } from "./api";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  type ReactNode,
+} from "react";
+import { authApi, type Usuario } from "./api";
+
+// ─── Types ───────────────────────────────────────
 
 interface AuthContextType {
-  user: User | null;
+  user: Usuario | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  login: (username: string, password: string) => Promise<LoginResult>;
   logout: () => Promise<void>;
 }
 
+interface LoginResult {
+  success: boolean;
+  error?: string;
+}
+
+// ─── Context ─────────────────────────────────────
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// ─── Provider ────────────────────────────────────
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<Usuario | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const checkAuth = useCallback(async () => {
+    const { data } = await authApi.me();
+    if (data) setUser(data);
+    setIsLoading(false);
+  }, []);
 
   useEffect(() => {
     checkAuth();
-  }, []);
+  }, [checkAuth]);
 
-  const checkAuth = async () => {
-    // El token ya no se guarda en localStorage; el backend lo maneja con cookies HttpOnly
-    // Simplemente intentamos obtener el usuario desde el backend
-    // El backend lee la cookie automáticamente
-    const { data, error } = await authApi.me();
-    
-    if (data && !error) {
-      setUser(data);
-    }
-    // Si hay error, simplemente no hay usuario (session expirada)
-    setIsLoading(false);
-  };
-
-  const login = async (username: string, password: string) => {
+  const login = useCallback(async (username: string, password: string): Promise<LoginResult> => {
     const { data, error } = await authApi.login({ username, password });
-    
-    if (error || !data) {
-      return { success: false, error: error || "Error de autenticación" };
+
+    if (error ?? !data) {
+      return { success: false, error: error ?? "Error de autenticación" };
     }
 
-    // El backend ya setea las cookies, solo necesitamos los datos del usuario
-    // La respuesta ahora tiene { usuario: User }
     if (data.usuario) {
       setUser(data.usuario);
       return { success: true };
     }
 
     return { success: false, error: "Error al obtener datos del usuario" };
-  };
+  }, []);
 
-  const logout = async () => {
-    // Llamar al endpoint de logout para borrar las cookies
+  const logout = useCallback(async () => {
     await authApi.logout();
     setUser(null);
-  };
+  }, []);
 
   return (
     <AuthContext.Provider
-      value={{
-        user,
-        isLoading,
-        isAuthenticated: !!user,
-        login,
-        logout,
-      }}
+      value={{ user, isLoading, isAuthenticated: user !== null, login, logout }}
     >
       {children}
     </AuthContext.Provider>
   );
 }
 
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+// ─── Hook ────────────────────────────────────────
+
+export function useAuth(): AuthContextType {
+  const ctx = useContext(AuthContext);
+  if (ctx === undefined) {
+    throw new Error("useAuth debe usarse dentro de un <AuthProvider>");
   }
-  return context;
+  return ctx;
 }

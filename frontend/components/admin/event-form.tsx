@@ -31,13 +31,20 @@ export function EventForm({ initialData, isEditing = false }: EventFormProps) {
   const [isUploading, setIsUploading] = useState(false);
 
   const [formData, setFormData] = useState<EventCreate>({
-    title: initialData?.title || "",
-    description: initialData?.description || "",
-    image_url: initialData?.image_url || "",
-    date: initialData?.date || "",
-    time: initialData?.time || "",
-    location: initialData?.location || "",
-    event_type: initialData?.event_type || "evento",
+    titulo: initialData?.titulo || initialData?.title || "",
+    title: initialData?.title || initialData?.titulo || "",
+    descripcion: initialData?.descripcion || initialData?.description || "",
+    description: initialData?.description || initialData?.descripcion || "",
+    imagen_url: initialData?.imagen_url || initialData?.image_url || "",
+    image_url: initialData?.image_url || initialData?.imagen_url || "",
+    fecha: initialData?.fecha || initialData?.date || "",
+    date: initialData?.date || initialData?.fecha || "",
+    hora: initialData?.hora || initialData?.time || "",
+    time: initialData?.time || initialData?.hora || "",
+    lugar: initialData?.lugar || initialData?.location || "",
+    location: initialData?.location || initialData?.lugar || "",
+    tipo_evento: initialData?.tipo_evento || initialData?.event_type || "evento",
+    event_type: initialData?.event_type || initialData?.tipo_evento || "evento",
   });
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,27 +77,27 @@ export function EventForm({ initialData, isEditing = false }: EventFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.title.trim()) {
+    if (!formData.titulo?.trim() && !formData.title?.trim()) {
       toast.error("El título es obligatorio");
       return;
     }
 
-    if (!formData.description.trim()) {
+    if (!formData.descripcion?.trim() && !formData.description?.trim()) {
       toast.error("La descripción es obligatoria");
       return;
     }
 
-    if (!formData.date) {
+    if (!formData.fecha && !formData.date) {
       toast.error("La fecha es obligatoria");
       return;
     }
 
-    if (!formData.time) {
+    if (!formData.hora && !formData.time) {
       toast.error("La hora es obligatoria");
       return;
     }
 
-    if (!formData.location.trim()) {
+    if (!formData.lugar?.trim() && !formData.location?.trim()) {
       toast.error("La ubicación es obligatoria");
       return;
     }

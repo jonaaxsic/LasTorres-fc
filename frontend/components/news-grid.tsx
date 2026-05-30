@@ -49,8 +49,8 @@ export function NewsGrid({ news }: NewsGridProps) {
               <div className="relative aspect-video w-full">
                 {item.imagen_url || item.imagenUrl ? (
                   <>
-                    <Image
-                      src={item.imagen_url || item.imagenUrl}
+                      <Image
+                      src={item.imagen_url ?? item.imagenUrl ?? ""}
                       alt={item.titulo}
                       fill
                       className="object-cover"

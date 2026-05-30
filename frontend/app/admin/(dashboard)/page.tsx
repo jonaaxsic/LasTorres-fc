@@ -257,7 +257,7 @@ export default function AdminDashboardPage() {
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-sm truncate">{news.titulo}</p>
                       <p className="text-xs text-muted-foreground">
-                        {new Date(news.created_at).toLocaleDateString("es-ES")}
+                        {news.created_at ? new Date(news.created_at).toLocaleDateString("es-ES") : ""}
                       </p>
                     </div>
                     {news.featured && (

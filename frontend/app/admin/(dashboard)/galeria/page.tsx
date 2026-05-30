@@ -78,8 +78,8 @@ export default function GaleriaPage() {
     setIsUploading(true);
     const { data, error } = await galleryApi.upload({
       url: uploadData.url,
-      title: uploadData.title || undefined,
-      description: uploadData.description || undefined,
+      titulo: uploadData.title || undefined,
+      descripcion: uploadData.description || undefined,
     });
 
     if (data) {

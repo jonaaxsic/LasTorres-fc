@@ -155,8 +155,8 @@ export default function EventosPage() {
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <Badge className={typeColors[event.event_type]}>
-                            {EVENT_TYPE_LABELS[event.event_type]}
+                          <Badge className={typeColors[event.event_type ?? "evento"]}>
+                            {EVENT_TYPE_LABELS[event.event_type ?? "evento"]}
                           </Badge>
                         </div>
                         <h3 className="font-semibold truncate mb-1">{event.titulo}</h3>

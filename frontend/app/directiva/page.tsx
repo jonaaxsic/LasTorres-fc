@@ -7,29 +7,19 @@ import { Badge } from "@/components/ui/badge";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { DirectivaCard } from "@/components/directiva-card";
 import { BackgroundEffects } from "@/components/background-effects";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
-
-interface Member {
-  id: number;
-  nombre: string;
-  cargo: string;
-  descripcion?: string;
-  foto_url?: string;
-}
+import { teamApi, type Directivo } from "@/lib/api";
 
 export default function DirectivaPage() {
-  const [members, setMembers] = useState<Member[]>([]);
+  const [members, setMembers] = useState<Directivo[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`${API_URL}/api/directiva/`)
-      .then(res => res.json())
-      .then(data => {
-        setMembers(data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    teamApi.getAll().then(({ data, error }) => {
+      if (data) setMembers(data);
+      if (error) setError(error);
+      setLoading(false);
+    });
   }, []);
 
   return (
@@ -39,19 +29,21 @@ export default function DirectivaPage() {
       <main className="min-h-screen py-24 px-4">
         <div className="max-w-6xl mx-auto">
           <Breadcrumb />
-          
+
           <div className="mb-8">
             <Badge variant="outline" className="mb-3">Directiva</Badge>
             <h1 className="font-heading text-4xl md:text-5xl font-bold uppercase tracking-tight">
               Nuestra Directiva
             </h1>
             <p className="text-muted-foreground mt-3">
-              Conoce a los encargado del club
+              Conoce a los encargados del club
             </p>
           </div>
 
           {loading ? (
-            <p>Cargando...</p>
+            <p className="text-muted-foreground">Cargando...</p>
+          ) : error ? (
+            <p className="text-destructive">{error}</p>
           ) : members.length === 0 ? (
             <p className="text-muted-foreground">No hay directivos</p>
           ) : (

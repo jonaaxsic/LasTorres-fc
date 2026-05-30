@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, type Dispatch, type SetStateAction } from "react";
 import { News } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -189,7 +189,7 @@ function MobileNewsGrid({
 }: { 
   news: News[];
   currentPage: number;
-  setCurrentPage: (p: number) => void;
+  setCurrentPage: Dispatch<SetStateAction<number>>;
   totalPages: number;
   currentNews: News[];
 }) {

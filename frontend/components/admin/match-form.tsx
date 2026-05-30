@@ -35,53 +35,68 @@ export function MatchForm({ initialData, isEditing = false, onSuccess }: MatchFo
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState<MatchCreate>({
-    opponent: initialData?.opponent || "",
-    opponent_logo: initialData?.opponent_logo || "",
-    date: initialData?.date || "",
-    time: initialData?.time || "",
-    location: initialData?.location || "",
-    home_score: initialData?.home_score,
-    away_score: initialData?.away_score,
-    is_home: initialData?.is_home ?? true,
+    rival: initialData?.rival || initialData?.opponent || "",
+    opponent: initialData?.opponent || initialData?.rival || "",
+    logo_rival: initialData?.logo_rival || initialData?.opponent_logo || "",
+    opponent_logo: initialData?.opponent_logo || initialData?.logo_rival || "",
+    fecha: initialData?.fecha || initialData?.date || "",
+    date: initialData?.date || initialData?.fecha || "",
+    hora: initialData?.hora || initialData?.time || "",
+    time: initialData?.time || initialData?.hora || "",
+    lugar: initialData?.lugar || initialData?.location || "",
+    location: initialData?.location || initialData?.lugar || "",
+    marca_local: initialData?.marca_local ?? initialData?.home_score,
+    home_score: initialData?.home_score ?? initialData?.marca_local,
+    marca_visitante: initialData?.marca_visitante ?? initialData?.away_score,
+    away_score: initialData?.away_score ?? initialData?.marca_visitante,
+    es_local: initialData?.es_local ?? initialData?.is_home ?? true,
+    is_home: initialData?.is_home ?? initialData?.es_local ?? true,
+    categorias: initialData?.categoria
+      ? parseCategorias(initialData.categoria)
+      : ["Sub-10"],
     categories: initialData?.categoria
       ? parseCategorias(initialData.categoria)
       : ["Sub-10"],
-    status: initialData?.status || "scheduled",
+    estado: initialData?.estado || initialData?.status || "programado",
+    status: initialData?.status || initialData?.estado || "scheduled",
   });
 
   const toggleCategory = (cat: string) => {
     setFormData((prev) => ({
       ...prev,
-      categories: prev.categories.includes(cat)
-        ? prev.categories.filter((c) => c !== cat)
-        : [...prev.categories, cat],
+      categorias: prev.categorias.includes(cat)
+        ? prev.categorias.filter((c) => c !== cat)
+        : [...prev.categorias, cat],
+      categories: prev.categorias.includes(cat)
+        ? prev.categorias.filter((c) => c !== cat)
+        : [...prev.categorias, cat],
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.opponent.trim()) {
+    if (!formData.rival?.trim() && !formData.opponent?.trim()) {
       toast.error("El rival es obligatorio");
       return;
     }
 
-    if (!formData.date) {
+    if (!formData.fecha && !formData.date) {
       toast.error("La fecha es obligatoria");
       return;
     }
 
-    if (!formData.time) {
+    if (!formData.hora && !formData.time) {
       toast.error("La hora es obligatoria");
       return;
     }
 
-    if (!formData.location.trim()) {
+    if (!formData.lugar?.trim() && !formData.location?.trim()) {
       toast.error("La ubicación es obligatoria");
       return;
     }
 
-    if (formData.categories.length === 0) {
+    if (formData.categorias.length === 0) {
       toast.error("Seleccioná al menos una categoría");
       return;
     }
@@ -109,15 +124,25 @@ export function MatchForm({ initialData, isEditing = false, onSuccess }: MatchFo
       if (onSuccess) {
         // Modo inline: resetear formulario y refrescar lista
         setFormData({
+          rival: "",
           opponent: "",
+          logo_rival: "",
           opponent_logo: "",
+          fecha: "",
           date: "",
+          hora: "",
           time: "",
+          lugar: "",
           location: "",
+          marca_local: undefined,
           home_score: undefined,
+          marca_visitante: undefined,
           away_score: undefined,
+          es_local: true,
           is_home: true,
+          categorias: ["Sub-10"],
           categories: ["Sub-10"],
+          estado: "programado",
           status: "scheduled",
         });
         onSuccess();
@@ -163,7 +188,7 @@ export function MatchForm({ initialData, isEditing = false, onSuccess }: MatchFo
                     </p>
                     <div className="flex flex-wrap gap-3">
                       {CATEGORIES.map((cat) => {
-                        const isSelected = formData.categories.includes(cat);
+                        const isSelected = formData.categorias.includes(cat);
                         return (
                           <label
                             key={cat}
@@ -196,7 +221,7 @@ export function MatchForm({ initialData, isEditing = false, onSuccess }: MatchFo
                         );
                       })}
                     </div>
-                    {formData.categories.length === 0 && (
+                    {formData.categorias.length === 0 && (
                       <p className="text-xs text-destructive mt-1">
                         Seleccioná al menos una categoría
                       </p>
