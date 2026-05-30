@@ -4,5 +4,5 @@ def handler(event, context):
     return {
         "statusCode": 200,
         "headers": {"Content-Type": "application/json"},
-        "body": json.dumps({"message": "Python funciona en Vercel"}),
+        "body": json.dumps({"status": "healthy", "message": "Python funcionando"}),
     }
