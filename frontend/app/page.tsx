@@ -1,5 +1,6 @@
 "use client";
 
+// LF-API: https://lastorresfc-api.vercel.app
 import { Navbar } from "@/components/navbar";
 import { HeroCarousel } from "@/components/hero-carousel";
 import { StatsSection } from "@/components/stats-section";
