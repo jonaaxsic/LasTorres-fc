@@ -1,9 +1,8 @@
-"""Entry point serverless para Vercel - Las Torres FC API."""
+"""Entry point ASGI para Vercel - auto-detectado en app.py"""
 import sys
 import os
 
-# Agregar Backend/ al path para que encuentre app/
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+sys.path.insert(0, os.path.dirname(__file__))
 
 from fastapi import FastAPI
 
