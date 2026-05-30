@@ -55,8 +55,8 @@ export default function AdminDashboardPage() {
       newsApi.getAll(),
       matchesApi.getAll(),
       eventsApi.getAll(),
-      fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/jugadores`).then(r => r.json()).catch(() => []),
-      fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/directiva`).then(r => r.json()).catch(() => []),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL || ""}/api/jugadores`).then(r => r.json()).catch(() => []),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL || ""}/api/directiva`).then(r => r.json()).catch(() => []),
     ]);
 
     if (newsRes.data) {

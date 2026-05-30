@@ -8,7 +8,7 @@ import { Breadcrumb } from "@/components/breadcrumb";
 import { DirectivaCard } from "@/components/directiva-card";
 import { BackgroundEffects } from "@/components/background-effects";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 interface Member {
   id: number;

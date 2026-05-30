@@ -9,7 +9,7 @@ import { CalendarDays } from "lucide-react";
 import Image from "next/image";
 import { Breadcrumb } from "@/components/breadcrumb";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 interface News {
   id: number;
